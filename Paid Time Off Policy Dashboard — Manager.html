@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Furnished Quarters — Manager Time Off Reference</title>
+<style>
+  :root {
+    --dark:      #21232C;
+    --sage:      #72806D;
+    --gold:      #C08129;
+    --cream:     #F2E8D9;
+    --warm-gray: #CBC4BB;
+    --bg:        #F0EBE2;
+    --white:     #ffffff;
+    --muted:     #555555;
+    --lt-gray:   #F7F3EE;
+    --border:    #E0D8CF;
+    --ca-red:    #8B1A1A;
+    --ma-teal:   #4A6845;
+    --nyc-blue:  #1A3A5C;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Campton, Arial, Helvetica, sans-serif;
+    background: var(--bg);
+    color: var(--dark);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── Banner ──────────────────────────────────────────────────── */
+  .banner {
+    background: var(--dark);
+    color: #fff;
+    padding: 20px 32px 16px;
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .banner h1 { font-size: 24px; font-weight: 700; letter-spacing: .3px; }
+  .banner p  { font-size: 13px; opacity: .75; margin-top: 4px; }
+  .banner-badge {
+    background: var(--gold);
+    color: #fff;
+    border-radius: 14px;
+    padding: 4px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-left: auto;
+    align-self: center;
+    white-space: nowrap;
+  }
+
+  /* ── Nav Tabs ─────────────────────────────────────────────────── */
+  .tabs {
+    display: flex;
+    background: var(--sage);
+    gap: 2px;
+    padding: 0 24px;
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 12px 22px;
+    cursor: pointer;
+    color: rgba(255,255,255,.75);
+    font-size: 13px;
+    font-weight: 600;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    transition: all .18s;
+  }
+  .tab:hover { color: #fff; background: rgba(255,255,255,.1); }
+  .tab.active { color: #fff; border-bottom-color: var(--gold); background: rgba(255,255,255,.12); }
+
+  /* ── Panes ────────────────────────────────────────────────────── */
+  .pane { display: none; padding: 28px 32px 48px; max-width: 1080px; }
+  .pane.active { display: block; }
+
+  /* ── Page Title ───────────────────────────────────────────────── */
+  .page-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 6px;
+  }
+  .page-sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  /* ── Info Cards ───────────────────────────────────────────────── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .card-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .info-card {
+    background: var(--white);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  }
+  .info-card-hdr {
+    padding: 12px 16px;
+    font-weight: 700;
+    font-size: 13px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .info-card-hdr.dark  { background: var(--dark); }
+  .info-card-hdr.sage  { background: var(--sage); }
+  .info-card-hdr.gold  { background: var(--gold); }
+  .info-card-hdr.teal  { background: var(--ma-teal); }
+  .info-card-hdr.red   { background: var(--ca-red); }
+  .info-card-body { padding: 14px 16px; }
+  .info-card-body p { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 8px; }
+  .info-card-body p:last-child { margin-bottom: 0; }
+  .stat-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .stat-line:last-child { border-bottom: none; }
+  .stat-line .lbl { color: var(--muted); }
+  .stat-line .val { font-weight: 700; color: var(--dark); }
+
+  /* ── Callout Box ──────────────────────────────────────────────── */
+  .callout {
+    background: var(--cream);
+    border-left: 4px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    font-size: 13px;
+    color: var(--dark);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  .callout strong { color: var(--dark); }
+
+  .callout-sage {
+    background: #EFF3EE;
+    border-left: 4px solid var(--sage);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    font-size: 13px;
+    color: var(--dark);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  /* ── Step Cards ───────────────────────────────────────────────── */
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .step-card {
+    background: var(--cream);
+    border-radius: 10px;
+    padding: 18px;
+    border-top: 4px solid var(--sage);
+  }
+  .step-card.gold-top { border-top-color: var(--gold); background: var(--white); border: 1px solid var(--border); border-top: 4px solid var(--gold); }
+  .step-number {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--sage);
+    letter-spacing: .08em;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .step-number.gold { color: var(--gold); }
+  .step-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 8px;
+  }
+  .step-body {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  /* ── Table ────────────────────────────────────────────────────── */
+  .tbl-wrap { overflow-x: auto; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.07); margin-bottom: 20px; }
+  table { width: 100%; border-collapse: collapse; background: var(--white); font-size: 13px; }
+  thead th {
+    background: var(--sage);
+    color: #fff;
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  tbody tr { border-bottom: 1px solid var(--border); }
+  tbody tr:hover { background: var(--cream); }
+  tbody td { padding: 9px 14px; vertical-align: top; line-height: 1.45; }
+
+  /* ── Section Divider ──────────────────────────────────────────── */
+  .sec-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 32px 0 20px;
+  }
+  .sec-divider-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--sage);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .sec-divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── State Selector ───────────────────────────────────────────── */
+  .state-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  .state-chip {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 2px solid var(--border);
+    background: var(--white);
+    color: var(--dark);
+    transition: all .15s;
+    user-select: none;
+  }
+  .state-chip:hover { border-color: var(--sage); color: var(--sage); }
+  .state-chip.active { background: var(--sage); color: #fff; border-color: var(--sage); }
+
+  /* ── State Detail Panel ───────────────────────────────────────── */
+  #state-panel {
+    display: none;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.08);
+    margin-bottom: 24px;
+    animation: fadeIn .2s ease;
+  }
+  #state-panel.visible { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+  .panel-title { font-size: 17px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+  .panel-law   { font-size: 12px; color: var(--sage); font-weight: 600; margin-bottom: 16px; }
+  .panel-grid  { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .panel-field { }
+  .panel-field .f-lbl { font-size: 10px; font-weight: 700; color: var(--sage); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; }
+  .panel-field .f-val { font-size: 13px; color: var(--dark); line-height: 1.4; }
+  .panel-note  { font-size: 12px; color: var(--muted); background: var(--lt-gray); border-left: 3px solid var(--sage); padding: 10px 14px; border-radius: 0 6px 6px 0; line-height: 1.6; }
+
+  /* ── Pill Tags ────────────────────────────────────────────────── */
+  .pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .pill.grant   { background: #FEE2E2; color: #7F1D1D; }
+  .pill.accrual { background: #D1FAE5; color: #065F46; }
+  .pill.vested  { background: #EDE9FE; color: #4C1D95; }
+
+  /* ── Use List ─────────────────────────────────────────────────── */
+  .use-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .use-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .use-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--sage);
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+  .use-dot.gold { background: var(--gold); }
+  .use-text strong { display: block; font-size: 13px; color: var(--dark); margin-bottom: 3px; }
+  .use-text span { font-size: 12px; color: var(--muted); line-height: 1.45; }
+
+  /* ── NYC Callout ──────────────────────────────────────────────── */
+  .nyc-box {
+    background: #F0F4F8;
+    border: 1px solid #B8CEDD;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 24px;
+  }
+  .nyc-box h3 { font-size: 15px; font-weight: 700; color: var(--nyc-blue); margin-bottom: 6px; }
+  .nyc-box p  { font-size: 13px; color: #2A4A62; line-height: 1.6; margin-bottom: 12px; }
+  .nyc-steps  { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 12px; }
+  .nyc-step   { background: var(--white); border-radius: 8px; padding: 12px 14px; border: 1px solid #B8CEDD; }
+  .nyc-step .n-lbl { font-size: 10px; font-weight: 700; color: var(--nyc-blue); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 4px; }
+  .nyc-step .n-title { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+  .nyc-step .n-body  { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* ── Do / Don't Lists ─────────────────────────────────────────── */
+  .check-list { list-style: none; padding: 0; margin: 0; }
+  .check-list li {
+    display: flex;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--dark);
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+  .check-list li:last-child { border-bottom: none; }
+  .check-list li .mk { font-weight: 700; flex-shrink: 0; }
+  .check-list li .mk.yes { color: var(--ma-teal); }
+  .check-list li .mk.no  { color: var(--ca-red); }
+
+  /* ── FAQ Accordion ────────────────────────────────────────────── */
+  .q-list { list-style: none; }
+  .q-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .q-hdr {
+    padding: 14px 18px;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--dark);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+  }
+  .q-hdr:hover { background: var(--cream); }
+  .q-hdr .arrow { color: var(--sage); font-size: 14px; transition: transform .2s; }
+  .q-hdr.open .arrow { transform: rotate(90deg); }
+  .q-body {
+    display: none;
+    padding: 0 18px 16px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .q-body.open { display: block; }
+
+  /* ── FAQ Group Headers ────────────────────────────────────────── */
+  .q-group-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--sage);
+    border-bottom: 2px solid var(--sage);
+    padding-bottom: 6px;
+    margin: 28px 0 12px;
+  }
+  .q-group-label:first-child { margin-top: 0; }
+
+  @media (max-width: 760px) {
+    .card-grid-2 { grid-template-columns: 1fr; }
+    .pane { padding: 20px 16px 40px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Banner ─────────────────────────────────────────────────────── -->
+<div class="banner">
+  <div>
+    <h1>Managing Time Off at Furnished Quarters</h1>
+    <p>Manager Reference Guide &mdash; PTO, Sick Leave &amp; Holidays</p>
+  </div>
+  <div class="banner-badge">For Managers</div>
+</div>
+
+<!-- ── Nav Tabs ───────────────────────────────────────────────────── -->
+<div class="tabs">
+  <div class="tab active" onclick="showPane(this,'two-banks')">Two Banks</div>
+  <div class="tab" onclick="showPane(this,'pto-tiers')">PTO Tiers</div>
+  <div class="tab" onclick="showPane(this,'pto-rules')">PTO Rules</div>
+  <div class="tab" onclick="showPane(this,'sick')">Sick Leave</div>
+  <div class="tab" onclick="showPane(this,'sick-pto')">Sick + PTO</div>
+  <div class="tab" onclick="showPane(this,'your-role')">Your Role</div>
+  <div class="tab" onclick="showPane(this,'paid-holidays')">Paid Holidays</div>
+  <div class="tab" onclick="showPane(this,'bereavement')">Bereavement</div>
+  <div class="tab" onclick="showPane(this,'flex-day')">Weekend Flex Day</div>
+  <div class="tab" onclick="showPane(this,'manager-faq')">Manager FAQ</div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANE 1 — TWO BANKS
+     ══════════════════════════════════════════════════════════════ -->
+<div id="pane-two-banks" class="pane active">
+  <div class="page-title">Two Separate Banks in ADP</div>
+  <div class="page-sub">Every employee has two dedicated time-off banks in ADP. They are tracked separately and serve different purposes. Never allow an employee to use one bank in place of the other without proper process.</div>
+
+  <div class="card-grid-2">
+    <div class="info-card">
+      <div class="info-card-hdr dark">&#128197; &nbsp;PTO Bank</div>
+      <div class="info-card-body">
+        <div class="stat-line"><span class="lbl">Purpose</span><span class="val">Vacation, personal time, personal days</span></div>
+        <div class="stat-line"><span class="lbl">Amount</span><span class="val">Tier-based — see individual policy doc</span></div>
+        <div class="stat-line"><span class="lbl">How given</span><span class="val">Front-loaded Jan 1 (Main) or accrual (MA/CA)</span></div>
+        <div class="stat-line"><span class="lbl">Main rule</span><span class="val">Use it or lose it by Dec 31 (Main employees)</span></div>
+        <div class="stat-line"><span class="lbl">Payout at exit</span><span class="val">Yes — accrued PTO paid out at separation</span></div>
+        <div class="stat-line"><span class="lbl">ADP bank name</span><span class="val">PTO (tier visible in employee profile)</span></div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-card-hdr sage">&#x1F3E5; &nbsp;Sick Leave Bank</div>
+      <div class="info-card-body">
+        <div class="stat-line"><span class="lbl">Purpose</span><span class="val">Illness, care, medical appointments, safety leave</span></div>
+        <div class="stat-line"><span class="lbl">Amount</span><span class="val">~40 hrs/year for full-time employees</span></div>
+        <div class="stat-line"><span class="lbl">How given</span><span class="val">Accrues: 1 hr per 30 hrs worked</span></div>
+        <div class="stat-line"><span class="lbl">Main rule</span><span class="val">Use as soon as earned; completely separate from PTO</span></div>
+        <div class="stat-line"><span class="lbl">Payout at exit</span><span class="val">No — sick leave is not paid out at separation</span></div>
+        <div class="stat-line"><span class="lbl">ADP bank name</span><span class="val">Sick Leave (state rules applied automatically)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>To check balances:</strong> Log into ADP WorkforceNow and navigate to <strong>My Team &rarr; Time Off Balances</strong>. You will see each team member's current PTO tier, PTO balance, and Sick Leave balance, along with usage history for the year.
+  </div>
+
+  <div class="callout-sage">
+    <strong>Key manager rule:</strong> Never allow an employee to use PTO in place of sick leave while their sick leave balance is still available. The sick leave bank must be applied first to any qualifying absence. PTO may only be used after sick leave is exhausted, and only if the employee requests it.
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANE 2 — PTO TIERS
+     ══════════════════════════════════════════════════════════════ -->
+<div id="pane-pto-tiers" class="pane">
+  <div class="page-title">What Managers Need to Know About PTO Tiers</div>
+  <div class="page-sub">Each employee is assigned to one of four PTO tiers based on their job classification. HR manages tier assignment and provides each employee with their individual policy document. Your role is to work with what ADP shows you — not to share specific tier amounts across the team.</div>
+
+  <div class="callout-sage">
+    Tier amounts are <strong>confidential to each employee</strong>. Do not share one employee's tier allocation with another. If an employee has questions about their specific allotment, direct them to HR. You can see balances and usage in ADP — that is all you need to manage approvals effectively.
+  </div>
+
+  <div class="card-grid">
+    <div class="info-card">
+      <div class="info-card-hdr dark">Tier Assignment</div>
+      <div class="info-card-body">
+        <p>Each employee is assigned to a tier (B, C, D, or E) by HR based on their job classification. The assignment is updated whenever a reclassification occurs. You can see each employee's tier clearly labeled in their ADP profile.</p>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-card-hdr gold">Check Balances in ADP</div>
+      <div class="info-card-body">
+        <p>Log into ADP WorkforceNow and navigate to <strong>My Team &rarr; Time Off Balances</strong>. From there you can view each team member's current PTO tier, balance, and usage history for the year.</p>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-card-hdr sage">PTO Grows Each Year</div>
+      <div class="info-card-body">
+        <p>Every employee's PTO increases by <strong>1 day (8 hours)</strong> for each completed year of service, up to the maximum for their individual tier. The carryover cap — <strong>40 hours</strong> — applies uniformly to all tiers.</p>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-card-hdr dark">CA &amp; MA Employees</div>
+      <div class="info-card-body">
+        <p>Employees in California or Massachusetts accrue PTO per pay period rather than receiving a front-loaded annual grant. State law requires this method. A higher balance cap also applies. ADP handles this automatically — no action needed from you.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANE 3 — PTO RULES
+     ══════════════════════════════════════════════════════════════ -->
+<div id="pane-pto-rules" class="pane">
+  <div class="page-title">How PTO Works — By Location</div>
+  <div class="page-sub">The method of PTO delivery and the carry-over rules differ based on where an employee works. ADP handles the correct setup automatically — your job is to approve or deny requests through ADP, not by email or verbal agreement alone.</div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Employee Group</th>
+          <th>How PTO is Delivered</th>
+          <th>Carry-Over Rule</th>
+          <th>Forfeiture</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Main (most employees)</strong></td>
+          <td><span class="pill grant">Front-Loaded</span> Full annual amount on Jan 1</td>
+          <td>Up to 40 hrs (5 days)</td>
+          <td>Balance above 40 hrs forfeited Dec 31</td>
+        </tr>
+        <tr>
+          <td><strong>Massachusetts employees</strong></td>
+          <td><span class="pill accrual">Accrual</span> Per pay period (weekly)</td>
+          <td>Up to 1.5&times; tier amount</td>
+          <td>Only above the carry-over cap</td>
+        </tr>
+        <tr>
+          <td><strong>California employees</strong></td>
+          <td><span class="pill vested">Vested Wage</span> Per pay period; vests as earned</td>
+          <td>Up to 1.5&times; tier amount</td>
+          <td>Cannot forfeit vested PTO &mdash; CA law</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sec-divider"><div class="sec-divider-label">Key PTO Rules for Managers</div><div class="sec-divider-line"></div></div>
+
+  <div class="card-grid">
+    <div class="info-card">
+      <div class="info-card-hdr gold">Front-Loaded on January 1</div>
+      <div class="info-card-body">
+        <p>Main employees receive their full annual allotment on January 1. Employees hired mid-year receive a prorated amount based on their hire date. ADP calculates the proration automatically.</p>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-hdr dark">40-Hour Carryover Cap (Main)</div>
+      <div class="info-card-body">
+        <p>Main employees may carry up to 40 hours (5 days) of unused PTO into the next calendar year. Any balance above 40 hours is forfeited at year end. Encourage your team to plan ahead if their balance is running high. Do not deny reasonable vacation requests.</p>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-hdr sage">Tenure Steps Up Each Year</div>
+      <div class="info-card-body">
+        <p>Every completed year of service adds 8 hours to the annual allotment, up to the tier maximum. ADP updates balances automatically on each employee's anniversary date.</p>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-hdr gold">Paid Out at Separation</div>
+      <div class="info-card-body">
+        <p>Accrued PTO is paid out upon any separation. For Main employees, this is the amount granted on Jan 1 minus hours used through the exit date. Contact HR immediately when an employee separation is confirmed.</p>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-hdr dark">90-Day Waiting Period</div>
+      <div class="info-card-body">
+        <p>Newly hired employees may not use PTO during their first 90 days of employment. PTO may appear visible in ADP during this period, but it cannot be accessed until the 90-day mark. Sick leave can be used as soon as it accrues.</p>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-hdr sage">All Requests Through ADP</div>
+      <div class="info-card-body">
+        <p>All PTO requests must be submitted by the employee through ADP WorkforceNow. You approve or deny through ADP — not by email, text, or verbal agreement alone. The ADP record is the official record.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANE 4 — SICK LEAVE
+     ══════════════════════════════════════════════════════════════ -->
+<div id="pane-sick" class="pane">
+  <div class="page-title">Sick Leave &mdash; A Separate, Protected Bank</div>
+  <div class="page-sub">Sick leave accrues throughout the year and is governed by state law in many locations. ADP handles the state-specific rules automatically. Your job is to approve use and stay out of the details.</div>
+
+  <div class="callout" style="border-left-color: var(--ca-red); background: #FFF5F5;">
+    <strong>Key rule:</strong> Never deny sick leave to a protected-state employee without checking with HR first. When in doubt about any sick leave situation, contact HR immediately.
+  </div>
+
+  <div class="card-grid-2">
+    <div class="info-card">
+      <div class="info-card-hdr teal">How Sick Leave Accrues</div>
+      <div class="info-card-body">
+        <div class="stat-line"><span class="lbl">Rate</span><span class="val">1 hour per 30 hours worked</span></div>
+        <div class="stat-line"><span class="lbl">Full-time (approximate)</span><span class="val">~40 hours per calendar year</span></div>
+        <div class="stat-line"><span class="lbl">Available immediately</span><span class="val">No waiting period</span></div>
+        <div class="stat-line"><span class="lbl">Minimum increment</span><span class="val">1 hour</span></div>
+        <div class="stat-line"><span class="lbl">Payout at separation</span><span class="val">No</span></div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-card-hdr sage">Permitted Uses</div>
+      <div class="info-card-body">
+        <p>Employee's own illness, injury, or medical condition</p>
+        <p>Medical, dental, or mental health appointments</p>
+        <p>Caring for an ill or injured family member</p>
+        <p>Domestic violence, sexual assault, or stalking leave</p>
+        <p>Public health emergencies or school/workplace closures</p>
+        <p>Additional uses may apply in protected states &mdash; contact HR</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-divider"><div class="sec-divider-label">States with Additional Sick Leave Requirements</div><div class="sec-divider-line"></div></div>
+
+  <div class="callout-sage">
+    Employees in these states may have higher accrual caps, more permitted uses, or additional notice rights. ADP is configured to apply state rules automatically. Click any state to see the details. <strong>Contact HR before taking any action on a protected-state sick leave request.</strong>
+  </div>
+
+  <div class="state-chips">
+    <div class="state-chip" onclick="showState(this,'arizona')">Arizona</div>
+    <div class="state-chip" onclick="showState(this,'california')">California</div>
+    <div class="state-chip" onclick="showState(this,'connecticut')">Connecticut</div>
+    <div class="state-chip" onclick="showState(this,'illinois')">Illinois</div>
+    <div class="state-chip" onclick="showState(this,'massachusetts')">Massachusetts</div>
+    <div class="state-chip" onclick="showState(this,'michigan')">Michigan</div>
+    <div class="state-chip" onclick="showState(this,'minnesota')">Minnesota</div>
+    <div class="state-chip" onclick="showState(this,'newjersey')">New Jersey</div>
+    <div class="state-chip" onclick="showState(this,'nystate')">New York State</div>
+    <div class="state-chip" onclick="showState(this,'nyc')">New York City</div>
+    <div class="state-chip" onclick="showState(this,'nyprenatal')">NY Prenatal Leave</div>
+    <div class="state-chip" onclick="showState(this,'nycpto')">NYC Protected Time Off</div>
+  </div>
+
+  <div id="state-panel">
+    <div class="panel-title" id="sp-name"></div>
+    <div class="panel-law"  id="sp-law"></div>
+    <div class="panel-grid">
+      <div class="panel-field"><div class="f-lbl">Accrual Rate</div><div class="f-val" id="sp-accrual"></div></div>
+      <div class="panel-field"><div class="f-lbl">Annual Maximum</div><div class="f-val" id="sp-max"></div></div>
+      <div class="panel-field"><div class="f-lbl">Carryover</div><div class="f-val" id="sp-carryover"></div></div>
+      <div class="panel-field"><div class="f-lbl">Waiting Period</div><div class="f-val" id="sp-wait"></div></div>
+      <div class="panel-field"><div class="f-lbl">Balance on Pay Stub?</div><div class="f-val" id="sp-paystub"></div></div>
+    </div>
+    <div class="panel-note" id="sp-note"></div>
+  </div>
+
+  <div style="font-size:12px;color:var(--muted);padding:12px 16px;background:var(--lt-gray);border-radius:8px;line-height:1.6;">
+    State and local regulations may provide additional protections beyond what is listed above. If an employee's state is not listed, the main company sick leave policy applies. Contact HR with any questions about a specific employee's state entitlements.
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANE 5 — SICK + PTO INTERACTION
+     ══════════════════════════════════════════════════════════════ -->
+<div id="pane-sick-pto" class="pane">
+  <div class="page-title">How Sick Leave and PTO Work Together</div>
+  <div class="page-sub">Sick leave and PTO are separate banks. Company policy establishes the order in which they are applied. Understanding this process is essential for managing absences correctly &mdash; especially for employees in New York City.</div>
+
+  <div class="callout">
+    <strong>Core rule:</strong> Sick leave is applied first to any qualifying absence. Employees may request to use PTO for wage replacement only after their sick leave balance is exhausted. Floating holidays and the Floating Cultural Day may not be used in lieu of sick time, and may not be used for wage replacement when sick leave is exhausted.
+  </div>
+
+  <div class="sec-divider"><div class="sec-divider-label">Standard Process &mdash; All Employees</div><div class="sec-divider-line"></div></div>
+
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-number">Step 1</div>
+      <div class="step-title">Sick Leave Applied First</div>
+      <div class="step-body">When an employee is absent for a qualifying reason, available sick leave is applied first. This is the company default and aligns with most state requirements. No action needed from you.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-number">Step 2</div>
+      <div class="step-title">Sick Balance Exhausted</div>
+      <div class="step-body">Once sick leave is fully used, any additional qualifying absence continues. The employee is not automatically paid unless PTO is applied. The absence continues without wage replacement.</div>
+    </div>
+    <div class="step-card gold-top">
+      <div class="step-number gold">Step 3 &mdash; Employee Option</div>
+      <div class="step-title">Employee May Request PTO</div>
+      <div class="step-body">After sick leave is exhausted, an employee may request to use available PTO for wage replacement. <strong>This request must come from the employee.</strong> Do not apply PTO on their behalf without their request. Direct the employee to log in to ADP Self Service and submit their time off using the reason code <strong>PTO &mdash; Call Out</strong>.</div>
+    </div>
+  </div>
+
+  <div class="callout-sage">
+    <strong>Manager rule:</strong> Never apply PTO to an employee's absence automatically. Never pressure or require an employee to use PTO after sick leave is exhausted. The election must come from the employee.
+  </div>
+
+  <div class="nyc-box">
+    <h3>NYC Employees &mdash; Additional Layer: Protected Time Off</h3>
+    <p>New York City employees have a third leave type in addition to ESSTA sick leave and PTO: <strong>NYC Protected Time Off</strong> &mdash; a 32-hour annual flat grant. This leave is <em>unpaid by design</em> and is job-protected.</p>
+    <div class="nyc-steps">
+      <div class="nyc-step">
+        <div class="n-lbl">NYC Step 1</div>
+        <div class="n-title">Paid Sick Applied First</div>
+        <div class="n-body">For any qualifying absence, available NYC ESSTA and/or NY State NYPSSL paid sick leave is applied first.</div>
+      </div>
+      <div class="nyc-step">
+        <div class="n-lbl">NYC Step 2</div>
+        <div class="n-title">Protected Time Off Covers the Absence</div>
+        <div class="n-body">If sick leave is exhausted, NYC Protected Time Off covers the absence. The employee's job is protected, but the leave is unpaid. You may not require the employee to use PTO during this period.</div>
+      </div>
+      <div class="nyc-step">
+        <div class="n-lbl">NYC Step 3 &mdash; Employee Option</div>
+        <div class="n-title">Employee May Elect PTO for Wage Replacement</div>
+        <div class="n-body">The employee may choose to use available PTO to receive pay. This election must come from the employee. The absence is still counted against the NYC Protected Time Off bank, and that balance is reduced based on time away. Using PTO does not preserve or extend the 32-hour balance. Job protection remains in place regardless. Direct the employee to HR to process the PTO election correctly in ADP.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANE 6 — YOUR ROLE
+     ══════════════════════════════════════════════════════════════ -->
+<div id="pane-your-role" class="pane">
+  <div class="page-title">Manager Do's and Don'ts</div>
+  <div class="page-sub">Your role is to approve and manage time-off requests in ADP and to direct employees with policy questions to HR. Staying in your lane protects both you and the company from legal exposure.</div>
+
+  <div class="callout">
+    <strong>Key rule:</strong> Never deny sick leave to an employee in a protected state without checking with HR first. When in doubt about any time-off situation, contact HR.
+  </div>
+
+  <div class="card-grid-2">
+    <div class="info-card">
+      <div class="info-card-hdr teal">&#10003; &nbsp;Do This</div>
+      <div class="info-card-body">
+        <ul class="check-list">
+          <li><span class="mk yes">&#10003;</span>Approve and deny all time-off requests through ADP WorkforceNow.</li>
+          <li><span class="mk yes">&#10003;</span>Tell employees which bank to select in ADP when submitting a request (PTO for vacation, Sick for illness).</li>
+          <li><span class="mk yes">&#10003;</span>Allow sick leave use for any permitted reason without requiring a diagnosis.</li>
+          <li><span class="mk yes">&#10003;</span>Remind employees to request foreseeable PTO at least 30 days in advance.</li>
+          <li><span class="mk yes">&#10003;</span>Direct state-specific questions to HR immediately.</li>
+          <li><span class="mk yes">&#10003;</span>Contact HR when an absence may qualify for FMLA or another protected leave.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-card-hdr red">&#10005; &nbsp;Do Not Do This</div>
+      <div class="info-card-body">
+        <ul class="check-list">
+          <li><span class="mk no">&#10005;</span>Ask for a doctor's note unless the absence is 3 or more consecutive workdays.</li>
+          <li><span class="mk no">&#10005;</span>Ask why an employee is using sick leave or request a diagnosis.</li>
+          <li><span class="mk no">&#10005;</span>Require an employee to find their own replacement as a condition of using sick leave.</li>
+          <li><span class="mk no">&#10005;</span>Deny a sick leave request for a protected-state employee without consulting HR first.</li>
+          <li><span class="mk no">&#10005;</span>Allow or pressure an employee to use PTO for a sick absence while their sick balance is still available.</li>
+          <li><span class="mk no">&#10005;</span>Retaliate or impose any negative consequence for use of protected leave.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANE 7 — PAID HOLIDAYS
+     ══════════════════════════════════════════════════════════════ -->
+<div id="pane-paid-holidays" class="pane">
+  <div class="page-title">Paid Holidays, Floating Holidays &amp; Floating Cultural Day</div>
+  <div class="page-sub">Holiday benefits are provided in addition to PTO and Sick Leave. Taking a paid holiday does not reduce an employee's PTO or Sick Leave balance. Your role is to approve holiday and floating day requests in ADP and to direct policy questions to HR.</div>
+
+  <div class="callout">
+    <strong>Manager note:</strong> The Company publishes an annual holiday calendar that identifies official observance dates for that year. That calendar governs which dates are recognized. Share the calendar with your team at the start of each year and encourage advance planning for floating holidays and the Floating Cultural Day.
+  </div>
+
+  <div class="sec-divider"><div class="sec-divider-label">Company-Recognized Paid Holidays &mdash; 7 per Year</div><div class="sec-divider-line"></div></div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-bottom:28px;">
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:8px;padding:11px 15px;display:flex;align-items:center;gap:11px;">
+      <div style="background:var(--gold);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">1</div>
+      <div style="font-size:13px;font-weight:700;color:var(--dark);">New Year's Day</div>
+    </div>
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:8px;padding:11px 15px;display:flex;align-items:center;gap:11px;">
+      <div style="background:var(--gold);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">2</div>
+      <div style="font-size:13px;font-weight:700;color:var(--dark);">Memorial Day</div>
+    </div>
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:8px;padding:11px 15px;display:flex;align-items:center;gap:11px;">
+      <div style="background:var(--gold);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">3</div>
+      <div style="font-size:13px;font-weight:700;color:var(--dark);">Independence Day</div>
+    </div>
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:8px;padding:11px 15px;display:flex;align-items:center;gap:11px;">
+      <div style="background:var(--gold);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">4</div>
+      <div style="font-size:13px;font-weight:700;color:var(--dark);">Labor Day</div>
+    </div>
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:8px;padding:11px 15px;display:flex;align-items:center;gap:11px;">
+      <div style="background:var(--gold);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">5</div>
+      <div style="font-size:13px;font-weight:700;color:var(--dark);">Thanksgiving Day</div>
+    </div>
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:8px;padding:11px 15px;display:flex;align-items:center;gap:11px;">
+      <div style="background:var(--gold);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">6</div>
+      <div style="font-size:13px;font-weight:700;color:var(--dark);">Day After Thanksgiving</div>
+    </div>
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:8px;padding:11px 15px;display:flex;align-items:center;gap:11px;">
+      <div style="background:var(--gold);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">7</div>
+      <div style="font-size:13px;font-weight:700;color:var(--dark);">Christmas Day</div>
+    </div>
+  </div>
+
+  <div class="card-grid">
+    <div class="info-card">
+      <div class="info-card-hdr dark">Eligibility</div>
+      <div class="info-card-body">
+        <p>Regular full-time employees are eligible for paid holiday benefits. Regular part-time employees receive holiday pay only if the holiday falls on a day they are regularly scheduled to work. Employees must be actively employed at the time of the holiday.</p>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-hdr gold">Holiday Pay</div>
+      <div class="info-card-body">
+        <p>Holiday pay is based on the hours the employee was scheduled to work on the observed holiday, up to a maximum of 8 hours. Holiday pay for time not worked does not count toward overtime calculations unless required by law.</p>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-hdr sage">Holiday During PTO</div>
+      <div class="info-card-body">
+        <p>If a recognized holiday falls during an employee's approved PTO period, the day is treated as a holiday and is <strong>not deducted from the employee's PTO balance</strong>. Adjust the ADP request accordingly or contact HR to correct it.</p>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-hdr dark">Working on a Holiday</div>
+      <div class="info-card-body">
+        <p>Non-exempt employees who work on a recognized holiday receive <strong>1.5&times; their regular rate</strong> for all hours worked that day, plus an <strong>alternate paid day off</strong> within 14 calendar days. Coordinate with the employee to schedule the alternate day in ADP. Contact HR with questions.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-divider"><div class="sec-divider-label">Floating Holidays</div><div class="sec-divider-line"></div></div>
+
+  <div class="callout">
+    Full-time eligible employees receive up to <strong>four floating holidays</strong> per calendar year. Floating holidays may be used to observe religious or cultural holidays, birthdays, or other days of personal significance, subject to manager approval and business needs.
+  </div>
+
+  <div class="card-grid">
+    <div class="info-card">
+      <div class="info-card-hdr sage">How Many Employees Receive</div>
+      <div class="info-card-body">
+        <div class="stat-line"><span class="lbl">Hired before July 1</span><span class="val">3 upon hire</span></div>
+        <div class="stat-line"><span class="lbl">Hired on or after July 1</span><span class="val">2 upon hire</span></div>
+        <div class="stat-line"><span class="lbl">Each January 1 thereafter</span><span class="val">4 floating holidays</span></div>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-hdr dark">Key Rules</div>
+      <div class="info-card-body">
+        <p>Requests must be submitted and approved in advance through ADP. Floating holidays must be used within the calendar year in which they are granted. They do not carry over to the following year and are not paid out at termination, unless required by applicable law.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout" style="border-left-color: #F59E0B; background: #FFFBEB; margin-top: 12px;">
+    <strong>Important:</strong> Floating holidays may not be used for wage replacement when an employee's sick leave is exhausted or when the sick leave balance is insufficient to cover an absence. After sick leave runs out or is insufficient, employees may only request PTO for wage replacement using the reason code <strong>PTO &mdash; Call Out</strong> in ADP Self Service. Do not permit or facilitate use of floating holidays as a sick leave substitute.
+  </div>
+
+  <div class="sec-divider"><div class="sec-divider-label">Floating Cultural Day</div><div class="sec-divider-line"></div></div>
+
+  <div class="callout-sage">
+    Furnished Quarters provides one <strong>Floating Cultural Day (8 hours)</strong> each calendar year for eligible employees. Employees may use it for a birthday, religious holiday, cultural observance, or any occasion personally meaningful to them.
+  </div>
+
+  <div class="card-grid">
+    <div class="info-card">
+      <div class="info-card-hdr teal">Eligibility &amp; Grant</div>
+      <div class="info-card-body">
+        <div class="stat-line"><span class="lbl">Who qualifies</span><span class="val">Full-time regular employees</span></div>
+        <div class="stat-line"><span class="lbl">Waiting period</span><span class="val">After 90-Day Introductory Period</span></div>
+        <div class="stat-line"><span class="lbl">Amount</span><span class="val">8 hours per calendar year</span></div>
+        <div class="stat-line"><span class="lbl">Grant date</span><span class="val">January 1 each year</span></div>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-hdr sage">How to Use It</div>
+      <div class="info-card-body">
+        <p>May be taken in <strong>4-hour increments</strong> or as a full 8-hour day. Requests must be submitted in ADP in advance and approved by the manager following standard time-off procedures. Approval is subject to business needs.</p>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-hdr gold">Important Restrictions</div>
+      <div class="info-card-body">
+        <p>Must be used within the same calendar year in which it is granted. Hours do not carry over to the following year. Unused hours are not paid out upon termination of employment.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout" style="border-left-color: #F59E0B; background: #FFFBEB; margin-top: 12px;">
+    <strong>Important:</strong> The Floating Cultural Day may not be used for wage replacement when an employee's sick leave is exhausted or when the sick leave balance is insufficient to cover an absence. After sick leave runs out or is insufficient, employees may only request PTO for wage replacement using the reason code <strong>PTO &mdash; Call Out</strong> in ADP Self Service. Do not permit use of the Floating Cultural Day as a sick leave or wage replacement substitute.
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANE 8 — BEREAVEMENT
+     ══════════════════════════════════════════════════════════════ -->
+<div id="pane-bereavement" class="pane">
+  <div class="page-title">Bereavement Leave</div>
+  <div class="page-sub">Bereavement leave is separate from PTO and Sick Leave banks. Taking bereavement leave does not reduce either of those balances.</div>
+
+  <div class="callout">
+    <strong>How it works:</strong> When an employee experiences a loss, they should notify you and HR as soon as they are able. Bereavement leave is granted on top of their PTO and sick leave &mdash; they are not required to use either of those banks first. If they need more time beyond what the policy provides, they may separately request PTO.
+  </div>
+
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <div style="font-size:18px">&#128100;</div>
+    <div style="font-size:15px;font-weight:700;color:var(--dark)">Main Company Policy &mdash; All Full-Time Employees</div>
+  </div>
+
+  <div class="card-grid">
+    <div class="info-card">
+      <div class="info-card-hdr dark">Days Granted</div>
+      <div class="info-card-body">
+        <p style="font-size:14px;font-weight:700;color:var(--dark)">Up to 3 paid workdays</p>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-hdr gold">Eligible Relationships</div>
+      <div class="info-card-body">
+        <p>Spouse or domestic partner, parent, child, sibling, grandparent, grandchild</p>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-hdr sage">How to Process</div>
+      <div class="info-card-body">
+        <p>Employee notifies you and HR. Request submitted in ADP &mdash; select "Bereavement Leave." You approve in ADP. The leave will not reduce PTO or Sick Leave. Contact HR if you need guidance on documentation or state addendums.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANE 9 — MANAGER FAQ
+     ══════════════════════════════════════════════════════════════ -->
+<div id="pane-manager-faq" class="pane">
+  <div class="page-title">Manager FAQ</div>
+  <div class="page-sub">Answers to questions managers ask most frequently about PTO, Sick Leave, and managing time off in ADP.</div>
+
+  <div class="q-group-label">General Questions</div>
+  <ul class="q-list">
+
+    <li class="q-item">
+      <div class="q-hdr" onclick="toggleQ(this)">How do I check an employee's PTO and Sick Leave balance in ADP? <span class="arrow">&#9654;</span></div>
+      <div class="q-body">Log into ADP WorkforceNow. Navigate to <strong>My Team &rarr; Time Off Balances</strong>. You will see each team member's PTO tier, current PTO balance, and Sick Leave balance. You can also view usage history for the year.</div>
+    </li>
+
+    <li class="q-item">
+      <div class="q-hdr" onclick="toggleQ(this)">How do I tell which PTO tier an employee is assigned to? <span class="arrow">&#9654;</span></div>
+      <div class="q-body">Open the employee's ADP profile and look for the PTO tier designation (B, C, D, or E) in their work information. The tier is also visible in the Time Off Balances section. If you need details about what their tier allotment is, direct the employee to HR or review their individual policy document provided at hire.</div>
+    </li>
+
+    <li class="q-item">
+      <div class="q-hdr" onclick="toggleQ(this)">An employee has a very high PTO balance. Should I require them to take time off before year-end? <span class="arrow">&#9654;</span></div>
+      <div class="q-body">No &mdash; do not mandate time off, but do encourage planning. Remind employees that Main company employees can carry over a maximum of 40 hours. Any balance above 40 hours will be forfeited on Dec 31. CA and MA employees have higher carryover caps due to state law. Encourage them to plan in advance if their balance is high. Do not deny reasonable vacation requests.</div>
+    </li>
+
+  </ul>
+
+  <div class="q-group-label">Sick Leave Questions</div>
+  <ul class="q-list">
+
+    <li class="q-item">
+      <div class="q-hdr" onclick="toggleQ(this)">Can I ask for a doctor's note when an employee uses sick leave? <span class="arrow">&#9654;</span></div>
+      <div class="q-body">Not for routine absences. A doctor's note may only be requested after an employee has been absent for three or more consecutive workdays in connection with a single illness or condition. Even then, you must coordinate with HR to ensure the request complies with applicable state law and company policy.</div>
+    </li>
+
+    <li class="q-item">
+      <div class="q-hdr" onclick="toggleQ(this)">Can I ask an employee why they are using sick leave? <span class="arrow">&#9654;</span></div>
+      <div class="q-body">No &mdash; do not ask for a diagnosis or reasons. You can confirm that the absence is for a covered purpose (the employee will indicate this in ADP), but you may not ask for details about the nature of the illness, medical condition, or appointment. If your manager asks for a diagnosis or medical details in connection with a routine sick leave request, that employee should contact HR.</div>
+    </li>
+
+    <li class="q-item">
+      <div class="q-hdr" onclick="toggleQ(this)">What if a California employee requests sick leave and I am unsure whether it qualifies? <span class="arrow">&#9654;</span></div>
+      <div class="q-body">California sick leave law is broad &mdash; it can be used for the employee's own illness or care needs, family member care, domestic violence situations, and other health-related purposes. If you have any doubt, approve the request and contact HR. CA law is employee-favorable, and the burden is on the employer to prove a request does not qualify.</div>
+    </li>
+
+    <li class="q-item">
+      <div class="q-hdr" onclick="toggleQ(this)">A protected-state employee used all their sick leave mid-year. Can I require them to use PTO for remaining absences? <span class="arrow">&#9654;</span></div>
+      <div class="q-body">No &mdash; you may not require or compel an employee to use PTO in lieu of sick leave. Sick leave is a separate, protected benefit. Employees may choose to use PTO to cover an absence after sick leave is exhausted, but the election must come from them. Never force or pressure an employee to switch to PTO. Contact HR with questions.</div>
+    </li>
+
+    <li class="q-item">
+      <div class="q-hdr" onclick="toggleQ(this)">An employee asked to use a floating holiday or the Floating Cultural Day when their sick leave runs out or they don't have enough sick time &mdash; can I approve this? <span class="arrow">&#9654;</span></div>
+      <div class="q-body"><strong>No.</strong> Floating holidays and the Floating Cultural Day may not be used for wage replacement when sick leave is exhausted or when the sick leave balance is insufficient to cover an absence. These benefits are for scheduled personal, cultural, or religious observances &mdash; they are not a substitute for sick leave or PTO in a qualified sick absence scenario. If an employee's sick leave runs out or is insufficient, direct them to log in to ADP Self Service and submit their time off using the reason code <strong>PTO &mdash; Call Out</strong> if they want wage replacement. Do not approve floating time in this context. Contact HR if you have questions.</div>
+    </li>
+
+  </ul>
+
+  <div class="q-group-label">NYC &amp; Special Cases</div>
+  <ul class="q-list">
+
+    <li class="q-item">
+      <div class="q-hdr" onclick="toggleQ(this)">One of my NYC employees is taking protected time off and also asked to use PTO for wage replacement. How do I handle this? <span class="arrow">&#9654;</span></div>
+      <div class="q-body">The employee's request is valid. Direct them to submit the PTO request to HR directly &mdash; do not apply PTO yourself. HR will process it correctly in ADP. Remember: the Protected Time Off bank is still reduced based on the time away, even when the employee uses PTO for pay. Job protection remains in place regardless. The process is: sick leave first (if applicable), then protected time off (unpaid), then PTO if elected by the employee.</div>
+    </li>
+
+    <li class="q-item">
+      <div class="q-hdr" onclick="toggleQ(this)">An employee asked me something about their leave that I am not sure how to answer &mdash; what should I do? <span class="arrow">&#9654;</span></div>
+      <div class="q-body">Submit an HR Request using the <a href="https://form.asana.com/?k=6HTjxkawj9RFCFATqa412Q&d=1199691382729239" target="_blank" style="color:inherit;text-decoration:underline;">HR Request Form</a>. Leave policies &mdash; especially state-specific sick leave, FMLA, and bereavement rules &mdash; have legal nuances that go beyond a manager's day-to-day scope. When in doubt, it is always better to check with HR before giving an employee guidance that turns out to be incorrect.</div>
+    </li>
+
+  </ul>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANE — WEEKEND TRAVEL FLEX DAY
+     ══════════════════════════════════════════════════════════════ -->
+<div id="pane-flex-day" class="pane">
+  <div class="page-title">Weekend Travel Flex Day &mdash; Exempt Employees</div>
+  <div class="page-sub">A limited flexibility benefit for exempt salaried employees required to travel for business on a weekend. This is not overtime, comp time, or additional wages.</div>
+
+  <div class="callout" style="border-left-color: var(--gold); background: #FFFBEB;">
+    <strong>Manager reminder:</strong> This policy applies only to <strong>exempt employees</strong>. Do not approve flex days for non-exempt employees &mdash; doing so could create overtime liability. Flex days are discretionary, subject to your approval, and must generally be used within 14 calendar days.
+  </div>
+
+  <div class="sec-divider"><div class="sec-divider-label">Policy Overview</div><div class="sec-divider-line"></div></div>
+
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-number">Eligibility</div>
+      <div class="step-title">Who It Applies To</div>
+      <div class="step-body">Exempt salaried employees required to travel for Company business on a Saturday or Sunday, involving travel away from their regular work location. Weekend work without required travel does not qualify.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-number">Qualifying</div>
+      <div class="step-title">What Counts as Travel</div>
+      <div class="step-body">Required business travel on a Sat or Sun away from the employee's regular work location. Incidental remote work, weekend emails, calls, or minimal work without required travel does not qualify for a flex day.</div>
+    </div>
+    <div class="step-card gold-top">
+      <div class="step-number gold">Flex Day</div>
+      <div class="step-title">One Day, Your Approval</div>
+      <div class="step-body">An eligible employee may request <strong>one flex day</strong> following qualifying weekend travel. It must generally be taken within <strong>14 calendar days</strong>. You may approve, deny, or reschedule it based on business needs. Flex days do not reduce PTO balances.</div>
+    </div>
+  </div>
+
+  <div class="sec-divider"><div class="sec-divider-label">What Flex Days Are &mdash; And Are Not</div><div class="sec-divider-line"></div></div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+    <div style="background:#F0FDF4;border:1px solid #86EFAC;border-radius:8px;padding:16px 18px;font-size:13px;color:var(--dark);">
+      <div style="font-weight:700;margin-bottom:8px;color:#16A34A;">&#10003; Flex Days ARE:</div>
+      <ul style="margin:0 0 0 16px;line-height:2.0;">
+        <li>A discretionary flexibility benefit</li>
+        <li>Subject to your approval and business needs</li>
+        <li>To be used within 14 calendar days (extendable by you for operational needs)</li>
+        <li>Separate from PTO &mdash; do not reduce the employee's PTO balance</li>
+        <li>For exempt employees only</li>
+      </ul>
+    </div>
+    <div style="background:#FFF5F5;border:1px solid #FCA5A5;border-radius:8px;padding:16px 18px;font-size:13px;color:var(--dark);">
+      <div style="font-weight:700;margin-bottom:8px;color:#DC2626;">&#10007; Flex Days ARE NOT:</div>
+      <ul style="margin:0 0 0 16px;line-height:2.0;">
+        <li>Overtime compensation or comp time</li>
+        <li>An entitlement &mdash; they require your approval</li>
+        <li>Earned for weekend remote work without travel</li>
+        <li>Accrued, vested, or carried over</li>
+        <li>Paid out at separation</li>
+        <li>Applicable to non-exempt employees</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sec-divider"><div class="sec-divider-label">Your Role as a Manager</div><div class="sec-divider-line"></div></div>
+
+  <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:18px 20px;font-size:13px;color:var(--dark);line-height:1.8;margin-bottom:20px;">
+    <ol style="margin:0 0 0 18px;">
+      <li>When an exempt employee travels on a weekend for Company business, they may request a flex day from you.</li>
+      <li>Review the request &mdash; confirm travel was required and away from their regular work location.</li>
+      <li>Approve, deny, or reschedule based on business needs. You are not required to approve every request.</li>
+      <li>If approved, coordinate the flex day schedule. It should generally be within 14 calendar days.</li>
+      <li>If operational needs prevent use within 14 days, you may approve an alternate timeframe &mdash; document this.</li>
+      <li>You may require reasonable documentation confirming the qualifying weekend travel.</li>
+      <li>If you have questions about whether a specific situation qualifies, contact HR before approving.</li>
+    </ol>
+  </div>
+
+  <div class="callout-sage">
+    Flex days not used within 14 calendar days of the qualifying weekend travel will expire unless you approve an alternative timeframe due to operational needs. Flex days do not carry over and do not accumulate. This policy may be modified, suspended, or discontinued by the Company at any time.
+  </div>
+</div>
+
+</body>
+
+<!-- ── JavaScript ──────────────────────────────────────────────────── -->
+<script>
+/* Tab navigation */
+function showPane(tab, id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+  tab.classList.add('active');
+  document.getElementById('pane-' + id).classList.add('active');
+}
+
+/* State data for the detail panel */
+const STATES = {
+  arizona: {
+    name: 'Arizona',
+    law: 'EPST — Earned Paid Sick Time (A.R.S. §23-371 et seq.)',
+    accrual: '1 hr per 30 hrs worked',
+    max: '40 hrs/year',
+    carryover: '40 hrs',
+    wait: 'None — day 1 of employment',
+    paystub: 'Yes — accrued, used, and available balance',
+    note: 'Manager note: ADP is configured to apply AZ accrual rules automatically. You may not deny or penalize sick leave use. You cannot require employees to use PTO in place of earned sick time. Unused sick time carries over year to year.'
+  },
+  california: {
+    name: 'California',
+    law: 'CA Paid Sick Leave (CA Labor Code §245.5)',
+    accrual: '1 hr per 30 hrs worked (accrual, not front-loaded)',
+    max: '40 hrs usage / 80 hr accrual cap',
+    carryover: 'Up to 80 hr cap (usage remains 40 hrs/year)',
+    wait: 'None — may use after 90 days of employment',
+    paystub: 'Yes — balance displayed on each pay stub',
+    note: 'Manager note: CA sick leave and PTO are completely separate protected banks. Never deny a CA employee\'s sick leave request without checking with HR first. All accrued balances — both PTO and sick — are earned wages under CA law and cannot be forfeited.'
+  },
+  connecticut: {
+    name: 'Connecticut',
+    law: 'CT Paid Sick Leave (C.G.S. §31-57r et seq.)',
+    accrual: '1 hr per 30 hrs worked',
+    max: '40 hrs/year',
+    carryover: '40 hrs',
+    wait: 'None — day 1 of employment',
+    paystub: 'Recommended — available balance',
+    note: 'Manager note: CT law applies to service employees at employers with 50+ employees. ADP tracks accrual automatically. Documentation may only be requested after three or more consecutive days of leave. Contact HR before any denial.'
+  },
+  illinois: {
+    name: 'Illinois',
+    law: 'PLAWA — Paid Leave for All Workers Act (820 ILCS 192)',
+    accrual: '1 hr per 30 hrs worked',
+    max: '40 hrs/year',
+    carryover: '40 hrs (or full front-load option)',
+    wait: 'None — day 1 of employment',
+    paystub: 'Yes — available balance on pay stub or written notice each paycheck',
+    note: 'Manager note: Illinois PLAWA applies to all Illinois employees state-wide, including those in Chicago. PLAWA leave can be used for ANY reason — employees are not required to provide a reason or documentation. Contact HR before denying any PLAWA request.'
+  },
+  massachusetts: {
+    name: 'Massachusetts',
+    law: 'MEST — Massachusetts Earned Sick Time (M.G.L. c. 149 §148C)',
+    accrual: '1 hr per 30 hrs worked',
+    max: '40 hrs/year',
+    carryover: '40 hrs',
+    wait: 'None — day 1 of employment',
+    paystub: 'Recommended — available balance',
+    note: 'Manager note: MA sick time is a vested wage under the Wage Act — it cannot be forfeited. MA employees accrue both PTO and sick leave simultaneously per weekly pay period. All accrued sick leave must be paid out at separation. Contact HR before any denial.'
+  },
+  michigan: {
+    name: 'Michigan',
+    law: 'ESTA — Michigan Earned Sick Time Act (MCL §408.961 et seq., updated Feb 2025)',
+    accrual: '1 hr per 30 hrs worked',
+    max: '72 hrs/year',
+    carryover: '72 hrs',
+    wait: 'None — day 1 of employment',
+    paystub: 'Yes — accrued, used, and available balance',
+    note: 'Manager note: Michigan\'s ESTA was significantly expanded effective February 2025. The cap increased to 72 hours. ADP is configured for the updated thresholds. Consult HR if you have questions — do not rely on prior guidance about Michigan sick leave limits.'
+  },
+  minnesota: {
+    name: 'Minnesota (including Minneapolis)',
+    law: 'ESST — Earned Safe and Sick Time (Minn. Stat. §181.9445 et seq.)',
+    accrual: '1 hr per 30 hrs worked',
+    max: '48 hrs/year',
+    carryover: '80 hr total balance cap',
+    wait: 'None — day 1 of employment',
+    paystub: 'Yes — accrued, used, and available balance',
+    note: 'Manager note: MN ESST applies to all Minnesota employees, including those in Minneapolis. The 48-hour annual cap is higher than the main company policy — Furnished Quarters provides the additional hours above 40. Total balance cap is 80 hours. ADP applies Minnesota rules automatically.'
+  },
+  newjersey: {
+    name: 'New Jersey',
+    law: 'ESSL — NJ Earned Sick and Safe Leave (N.J.S.A. §34:11D-1 et seq.)',
+    accrual: '1 hr per 30 hrs worked',
+    max: '40 hrs/year',
+    carryover: 'Up to 40 hrs',
+    wait: 'None — day 1 of employment',
+    paystub: 'Recommended — available balance',
+    note: 'Manager note: NJ SASL applies to all employers regardless of size. Jersey City employees are fully covered under the NJ state law. Employees may carry over up to 40 hours of unused sick leave into the next year. ADP tracks accrual automatically.'
+  },
+  nystate: {
+    name: 'New York State',
+    law: 'NYPSSL — NY Paid Sick and Safe Leave (NY Labor Law §196-b)',
+    accrual: '1 hr per 30 hrs worked',
+    max: '56 hrs/year',
+    carryover: '56 hr cap',
+    wait: 'None — day 1 of employment',
+    paystub: 'Yes (on request) — available balance; best practice: show on each pay stub',
+    note: 'Manager note: NY state law is the baseline — NYC employees have additional ESSTA and Protected Time Off requirements on top. ADP is configured to apply the correct tier. Always check with HR for NYC-based employees before taking any action on a sick leave request.'
+  },
+  nyc: {
+    name: 'New York City',
+    law: 'ESSTA — NYC Earned Safe and Sick Time Act + NYPSSL',
+    accrual: '1 hr per 30 hrs worked (ESSTA + NYPSSL run concurrently)',
+    max: '56 hrs/year (combined ESSTA + NYPSSL)',
+    carryover: '56 hr cap',
+    wait: 'None — day 1 of employment',
+    paystub: 'Yes — accrued in period, used in period, available balance',
+    note: 'Manager note: NYC employees are covered by NY State NYPSSL, NYC ESSTA, NYC Protected Time Off, and — if applicable — NY Paid Prenatal Leave. All four layers apply simultaneously. Contact HR before taking any action on a NYC employee sick leave request.'
+  },
+  nyprenatal: {
+    name: 'New York — Paid Prenatal Leave',
+    law: 'NY PPL — NY Paid Prenatal Leave (NY Labor Law §196-b.2)',
+    accrual: 'Flat 20-hour grant per 52-week period',
+    max: '20 hrs per 52-week period',
+    carryover: 'None — expires after 52-week period from first use',
+    wait: 'None — available immediately',
+    paystub: 'Yes (NYC employees) — hours used and remaining balance',
+    note: 'Manager note: NY PPL applies to all New York employees regardless of employer size. It is a separate entitlement — it does not reduce PTO or sick leave balances. Employees are not required to disclose specifics of their appointment. Contact HR for any questions about this leave.'
+  },
+  nycpto: {
+    name: 'NYC Protected Time Off',
+    law: 'NYC Local Law — NYC Protected Time Off (NYC Admin. Code §20-1271 et seq., eff. Jan 1, 2024)',
+    accrual: 'Flat 32-hour grant on January 1 (not accrual-based)',
+    max: '32 hrs/year',
+    carryover: 'None — no carryover, expires December 31',
+    wait: 'None — available at start of employment',
+    paystub: 'Yes — available Protected Time Off balance where required',
+    note: 'Manager note: NYC Protected Time Off is a 32-hour annual flat grant — unpaid by default. Process: (1) Paid sick leave applied first. (2) After sick is exhausted, Protected Time Off covers the absence (job-protected, unpaid). (3) Employee may elect PTO for wage replacement — the request must come from the employee. The absence is still counted against the Protected Time Off bank, and that balance is reduced based on time away. Job protection remains in place regardless. Direct any PTO election requests to HR to process in ADP.'
+  }
+};
+
+let activeState = null;
+
+function showState(chip, key) {
+  document.querySelectorAll('.state-chip').forEach(c => c.classList.remove('active'));
+  if (activeState === key) {
+    activeState = null;
+    document.getElementById('state-panel').classList.remove('visible');
+    return;
+  }
+  chip.classList.add('active');
+  activeState = key;
+  const d = STATES[key];
+  if (!d) return;
+  document.getElementById('sp-name').textContent = d.name;
+  document.getElementById('sp-law').textContent  = d.law;
+  document.getElementById('sp-accrual').textContent   = d.accrual;
+  document.getElementById('sp-max').textContent       = d.max;
+  document.getElementById('sp-carryover').textContent = d.carryover;
+  document.getElementById('sp-wait').textContent      = d.wait;
+  document.getElementById('sp-paystub').textContent   = d.paystub;
+  document.getElementById('sp-note').textContent      = d.note;
+  const panel = document.getElementById('state-panel');
+  panel.classList.add('visible');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+/* FAQ accordion */
+function toggleQ(hdr) {
+  const body = hdr.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  document.querySelectorAll('.q-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.q-hdr').forEach(h => h.classList.remove('open'));
+  if (!isOpen) {
+    body.classList.add('open');
+    hdr.classList.add('open');
+  }
+}
+</script>
+</html>
