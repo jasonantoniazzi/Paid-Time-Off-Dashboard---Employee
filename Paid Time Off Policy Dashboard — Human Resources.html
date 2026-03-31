@@ -1,0 +1,2780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Furnished Quarters — PTO & Sick Leave Policy Dashboard — Human Resources</title>
+<style>
+  :root {
+    /* Employee-standard variable names */
+    --dark:      #21232C;
+    --sage:      #72806D;
+    --gold:      #C08129;
+    --cream:     #F2E8D9;
+    --warm-gray: #CBC4BB;
+    --bg:        #F0EBE2;
+    --white:     #ffffff;
+    --muted:     #666666;
+    /* Legacy aliases — keep for backward compatibility */
+    --dark-blue: #21232C;
+    --med-blue:  #72806D;
+    --accent:    #C08129;
+    --accent2:   #4A6845;
+    --lt-blue:   #F2E8D9;
+    --lt-gray:   #F7F3EE;
+    --border:    #CBC4BB;
+    --warn:      #7F4F00;
+    --warn-bg:   #FFF2CC;
+    --ca-red:    #8B1A1A;
+    --ma-teal:   #4A6845;
+    --text:      #21232C;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Campton, Arial, Helvetica, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 13px;
+  }
+
+  /* ── Top Banner ─────────────────────────────────────────────── */
+  .banner {
+    background: var(--dark-blue);
+    color: #fff;
+    padding: 18px 32px 12px;
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .banner h1 { font-size: 24px; font-weight: 700; letter-spacing: .3px; }
+  .banner p  { font-size: 12px; opacity: .8; margin-top: 3px; }
+  .badge {
+    background: var(--accent);
+    color: #fff;
+    border-radius: 12px;
+    padding: 3px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-left: auto;
+    align-self: center;
+    white-space: nowrap;
+  }
+
+  /* ── Warning Bar ─────────────────────────────────────────────── */
+  .warn-bar {
+    background: var(--warn-bg);
+    border-left: 5px solid var(--accent);
+    padding: 10px 24px;
+    font-size: 12px;
+    color: var(--warn);
+    font-weight: 600;
+  }
+
+  /* ── Nav Tabs ─────────────────────────────────────────────────── */
+  .tabs {
+    display: flex;
+    background: var(--med-blue);
+    gap: 2px;
+    padding: 0 24px;
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 12px 22px;
+    cursor: pointer;
+    color: rgba(255,255,255,.75);
+    font-size: 13px;
+    font-weight: 600;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    transition: all .18s;
+  }
+  .tab:hover { color: #fff; background: rgba(255,255,255,.1); }
+  .tab.active { color: #fff; border-bottom-color: var(--accent); background: rgba(255,255,255,.12); }
+
+  /* ── Content Wrapper ─────────────────────────────────────────── */
+  .pane { display: none; padding: 28px 32px 48px; max-width: 1080px; margin: 0 auto; }
+  .pane.active { display: block; }
+
+  /* ── Section Headers ─────────────────────────────────────────── */
+  .sec-hdr {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 24px 0 12px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .sec-hdr .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.6);
+    flex-shrink: 0;
+  }
+  .sec-hdr.main-co { background: var(--dark-blue); }
+  .sec-hdr.ma      { background: var(--ma-teal); }
+  .sec-hdr.ca      { background: var(--ca-red); }
+  .sec-hdr.sick    { background: var(--accent2); }
+  .sec-hdr.state   { background: #5B3A8E; }
+
+  /* ── Policy Cards ────────────────────────────────────────────── */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 14px;
+    margin-bottom: 6px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,.07);
+    transition: box-shadow .18s, transform .18s;
+  }
+  .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.12); transform: translateY(-1px); }
+  .card-hdr {
+    padding: 10px 14px;
+    font-weight: 700;
+    font-size: 12px;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-hdr.main-co { background: var(--dark-blue); }
+  .card-hdr.ma      { background: var(--ma-teal); }
+  .card-hdr.ca      { background: var(--ca-red); }
+  .card-hdr.sick    { background: var(--accent2); }
+  .card-hdr.state   { background: #5B3A8E; }
+  .card-hdr.local   { background: #7B4B2A; }
+  .chip {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.22);
+    white-space: nowrap;
+    font-weight: 600;
+  }
+
+  .card-body { padding: 12px 14px; }
+  .field-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 7px;
+    align-items: flex-start;
+  }
+  .field-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--med-blue);
+    text-transform: uppercase;
+    letter-spacing: .3px;
+    min-width: 118px;
+    flex-shrink: 0;
+    padding-top: 1px;
+  }
+  .field-val {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.45;
+  }
+  .field-val.input-needed {
+    background: var(--warn-bg);
+    color: var(--warn);
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px dashed var(--accent);
+  }
+  .field-val.yes-req {
+    color: var(--ca-red);
+    font-weight: 700;
+  }
+  .field-val.no-req {
+    color: #555;
+  }
+  .field-val.yes-payout {
+    color: var(--ca-red);
+    font-weight: 700;
+  }
+  .badge-accrual {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-right: 4px;
+  }
+  .badge-accrual.earn { background: #D1FAE5; color: #065F46; }
+  .badge-accrual.grant { background: #FEE2E2; color: #7F1D1D; }
+  .badge-accrual.sep { background: #EDE9FE; color: #4C1D95; }
+
+  .note-row {
+    background: var(--lt-gray);
+    border-left: 3px solid var(--med-blue);
+    border-radius: 0 4px 4px 0;
+    padding: 6px 10px;
+    font-size: 11px;
+    color: #444;
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  /* ── Overview Table ──────────────────────────────────────────── */
+  .tbl-wrap { overflow-x: auto; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    font-size: 12px;
+  }
+  thead th {
+    background: var(--med-blue);
+    color: #fff;
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+  }
+  tbody tr { border-bottom: 1px solid var(--border); }
+  tbody tr:hover { background: var(--lt-blue); }
+  tbody td {
+    padding: 8px 12px;
+    vertical-align: top;
+    line-height: 1.45;
+  }
+  tbody tr.pto-main  td { background: #FFF7EE; }
+  tbody tr.pto-ma    td { background: #F0F8FF; }
+  tbody tr.pto-ca    td { background: #FFF0F0; }
+  tbody tr.sick-main td { background: #F0FFF4; }
+  tbody tr.sick-state td { background: #F5F0FF; }
+  .pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 700;
+  }
+  .pill.grant { background: #FEE2E2; color: #7F1D1D; }
+  .pill.accrual { background: #D1FAE5; color: #065F46; }
+  .pill.flat { background: #EDE9FE; color: #4C1D95; }
+  .req  { color: var(--ca-red); font-weight: 700; }
+  .need { color: var(--warn); font-weight: 700; }
+
+  /* ── Stat Tiles ─────────────────────────────────────────────── */
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .tile {
+    background: #fff;
+    border-radius: 8px;
+    padding: 16px 18px;
+    border: 1px solid var(--border);
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  }
+  .tile .num { font-size: 28px; font-weight: 700; color: var(--med-blue); }
+  .tile .lbl { font-size: 11px; color: #666; margin-top: 4px; }
+  .tile .num.warn { color: var(--accent); }
+  .tile .num.red  { color: var(--ca-red); }
+  .tile.clickable { cursor: pointer; transition: box-shadow .15s, border-color .15s; }
+  .tile.clickable:hover { box-shadow: 0 4px 14px rgba(0,0,0,.12); border-color: #aaa; }
+
+  /* ── State Map Key ──────────────────────────────────────────── */
+  .state-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0 20px;
+  }
+  .state-tag {
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: default;
+  }
+  .state-tag.yes { background: #FEE2E2; color: var(--ca-red); border: 1px solid #FCA5A5; }
+  .state-tag.rec { background: var(--warn-bg); color: var(--warn); border: 1px dashed var(--accent); }
+  .state-tag.no  { background: #F1F5F9; color: #475569; border: 1px solid #CBD5E1; }
+</style>
+</head>
+<body>
+
+<div class="banner">
+  <div>
+    <h1>Furnished Quarters — PTO &amp; Sick Leave Policy Setup</h1>
+    <p>ADP Configuration Reference Dashboard &mdash; Human Resources &nbsp;|&nbsp; March 2026</p>
+  </div>
+  <div class="badge">For Internal HR Use Only</div>
+</div>
+
+<div class="warn-bar" style="background:#DCFCE7;border-color:#16A34A;color:#15803D;">
+  &#9989;&nbsp; PTO tier schedules have been extracted from all 12 policy documents. Annual hours and accrual rates are now populated throughout this dashboard. See the <strong>PTO Accrual Schedules</strong> tab for full tenure-based tables.
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showPane(this,'overview')">Overview &amp; Stats</div>
+  <div class="tab" onclick="showPane(this,'pto-main')">PTO &mdash; Main</div>
+  <div class="tab" onclick="showPane(this,'pto-states')">PTO &mdash; CA &amp; MA</div>
+  <div class="tab" onclick="showPane(this,'accrual-schedules')">Accrual Schedules</div>
+  <div class="tab" onclick="showPane(this,'sick-main')">Sick Leave</div>
+  <div class="tab" onclick="showPane(this,'sick-state')">Sick Leave &mdash; States</div>
+  <div class="tab" onclick="showPane(this,'paid-holidays')">Paid Holidays</div>
+  <div class="tab" onclick="showPane(this,'bereavement')">Bereavement</div>
+  <div class="tab" onclick="showPane(this,'flex-day')">Weekend Flex Day</div>
+  <div class="tab" onclick="showPane(this,'paystatements')">Pay Statements</div>
+  <div class="tab" onclick="showPane(this,'faq')">HR FAQ</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANE 1 — OVERVIEW
+     ══════════════════════════════════════════════════════════════ -->
+<div id="pane-overview" class="pane active">
+  <div class="tiles">
+    <div class="tile clickable" onclick="goToTab('pto-main')" title="View PTO policy details"><div class="num">12</div><div class="lbl">PTO Policy Tiers<br>(B/C/D/E × 3 groups)</div></div>
+    <div class="tile clickable" onclick="goToTab('accrual-schedules')" title="View PTO accrual schedules"><div class="num" style="color:#16A34A">12</div><div class="lbl">PTO Tier Schedules<br>(all tiers complete)</div></div>
+    <div class="tile clickable" onclick="goToTab('sick-state')" title="View state sick leave details"><div class="num">16</div><div class="lbl">Sick Leave Policies<br>(main + 15 state/local)</div></div>
+    <div class="tile clickable" onclick="goToTab('paystatements')" title="View pay statement requirements"><div class="num red">7</div><div class="lbl">Jurisdictions Requiring<br>Pay Stmt for Sick Leave</div></div>
+    <div class="tile clickable" onclick="goToTab('pto-main')" title="View PTO payout rules"><div class="num red">3</div><div class="lbl">Policies Requiring<br>Payout on Separation</div></div>
+    <div class="tile clickable" onclick="goToTab('pto-main')" title="View ADP policy group setup"><div class="num">3</div><div class="lbl">ADP Policy Groups<br>(Main / MA / CA)</div></div>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Policy Name</th>
+          <th>Applies To</th>
+          <th>Type</th>
+          <th>Accrual Model</th>
+          <th>Annual Max (hrs)</th>
+          <th>Carryover (hrs)</th>
+          <th>Pay Stmt Req?</th>
+          <th>Sep Payout?</th>
+          <th>ADP Bank</th>
+        </tr>
+      </thead>
+      <tbody>
+                <!-- PTO Main -->
+        <tr style="background:#2E4057">
+          <td colspan="9" style="color:#fff;font-weight:700;font-size:11px;padding:6px 10px;letter-spacing:.5px">
+            MAIN COMPANY &mdash; PTO (Grant, Front-Loaded Jan 1; prorated for new hires)
+          </td>
+        </tr>
+        <tr style="background:#1F4E79">
+          <td colspan="9" style="color:#fff;font-weight:600;font-size:10px;padding:4px 16px;font-style:italic">
+            &nbsp;&nbsp;Policy Tier B
+          </td>
+        </tr>
+        <tr class="pto-main" style="background:#F2E8D9">
+          <td><strong>PTO B &mdash; Main &nbsp;|&nbsp; Start</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>80 hrs</strong> (10 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#FFFFFF">
+          <td><strong>PTO B &mdash; Main &nbsp;|&nbsp; After 1 Year</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>88 hrs</strong> (11 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#F2E8D9">
+          <td><strong>PTO B &mdash; Main &nbsp;|&nbsp; After 2 Years</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>96 hrs</strong> (12 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#FFFFFF">
+          <td><strong>PTO B &mdash; Main &nbsp;|&nbsp; After 3 Years</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>104 hrs</strong> (13 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#F2E8D9">
+          <td><strong>PTO B &mdash; Main &nbsp;|&nbsp; After 4 Years</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>112 hrs</strong> (14 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#FFFFFF">
+          <td><strong>PTO B &mdash; Main &nbsp;|&nbsp; After 5 Years</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>120 hrs</strong> (15 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#F2E8D9">
+          <td><strong>PTO B &mdash; Main &nbsp;|&nbsp; After 6 Years</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>128 hrs</strong> (16 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#FFFFFF">
+          <td><strong>PTO B &mdash; Main &nbsp;|&nbsp; After 7 Years</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>136 hrs</strong> (17 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#F2E8D9">
+          <td><strong>PTO B &mdash; Main &nbsp;|&nbsp; After 8 Years</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>144 hrs</strong> (18 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#FFFFFF">
+          <td><strong>PTO B &mdash; Main &nbsp;|&nbsp; After 9 Years</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>152 hrs</strong> (19 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#F2E8D9">
+          <td><strong>PTO B &mdash; Main &nbsp;|&nbsp; 10 Years &mdash; Max</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>160 hrs</strong> (20 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr style="background:#375623">
+          <td colspan="9" style="color:#fff;font-weight:600;font-size:10px;padding:4px 16px;font-style:italic">
+            &nbsp;&nbsp;Policy Tier C
+          </td>
+        </tr>
+        <tr class="pto-main" style="background:#EDF7E7">
+          <td><strong>PTO C &mdash; Main &nbsp;|&nbsp; Start</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier C</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>120 hrs</strong> (15 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#FFFFFF">
+          <td><strong>PTO C &mdash; Main &nbsp;|&nbsp; After 1 Year</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier C</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>128 hrs</strong> (16 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#EDF7E7">
+          <td><strong>PTO C &mdash; Main &nbsp;|&nbsp; After 2 Years</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier C</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>136 hrs</strong> (17 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#FFFFFF">
+          <td><strong>PTO C &mdash; Main &nbsp;|&nbsp; After 3 Years</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier C</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>144 hrs</strong> (18 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#EDF7E7">
+          <td><strong>PTO C &mdash; Main &nbsp;|&nbsp; After 4 Years</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier C</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>152 hrs</strong> (19 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#FFFFFF">
+          <td><strong>PTO C &mdash; Main &nbsp;|&nbsp; 5 Years &mdash; Max</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier C</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>160 hrs</strong> (20 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr style="background:#7B2C2C">
+          <td colspan="9" style="color:#fff;font-weight:600;font-size:10px;padding:4px 16px;font-style:italic">
+            &nbsp;&nbsp;Policy Tier D
+          </td>
+        </tr>
+        <tr class="pto-main" style="background:#FBE9E9">
+          <td><strong>PTO D &mdash; Main &nbsp;|&nbsp; Start</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier D</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>160 hrs</strong> (20 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#FFFFFF">
+          <td><strong>PTO D &mdash; Main &nbsp;|&nbsp; After 1 Year</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier D</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>168 hrs</strong> (21 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#FBE9E9">
+          <td><strong>PTO D &mdash; Main &nbsp;|&nbsp; After 2 Years</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier D</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>176 hrs</strong> (22 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#FFFFFF">
+          <td><strong>PTO D &mdash; Main &nbsp;|&nbsp; After 3 Years</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier D</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>184 hrs</strong> (23 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#FBE9E9">
+          <td><strong>PTO D &mdash; Main &nbsp;|&nbsp; After 4 Years</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier D</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>192 hrs</strong> (24 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#FFFFFF">
+          <td><strong>PTO D &mdash; Main &nbsp;|&nbsp; 5 Years &mdash; Max</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier D</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>200 hrs</strong> (25 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr style="background:#6B4F9E">
+          <td colspan="9" style="color:#fff;font-weight:600;font-size:10px;padding:4px 16px;font-style:italic">
+            &nbsp;&nbsp;Policy Tier E
+          </td>
+        </tr>
+        <tr class="pto-main" style="background:#F0EBF8">
+          <td><strong>PTO E &mdash; Main &nbsp;|&nbsp; Start</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>96 hrs</strong> (12 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#FFFFFF">
+          <td><strong>PTO E &mdash; Main &nbsp;|&nbsp; After 1 Year</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>104 hrs</strong> (13 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#F0EBF8">
+          <td><strong>PTO E &mdash; Main &nbsp;|&nbsp; After 2 Years</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>112 hrs</strong> (14 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#FFFFFF">
+          <td><strong>PTO E &mdash; Main &nbsp;|&nbsp; After 3 Years</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>120 hrs</strong> (15 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#F0EBF8">
+          <td><strong>PTO E &mdash; Main &nbsp;|&nbsp; After 4 Years</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>128 hrs</strong> (16 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#FFFFFF">
+          <td><strong>PTO E &mdash; Main &nbsp;|&nbsp; After 5 Years</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>136 hrs</strong> (17 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#F0EBF8">
+          <td><strong>PTO E &mdash; Main &nbsp;|&nbsp; After 6 Years</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>144 hrs</strong> (18 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#FFFFFF">
+          <td><strong>PTO E &mdash; Main &nbsp;|&nbsp; After 7 Years</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>152 hrs</strong> (19 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-main" style="background:#F0EBF8">
+          <td><strong>PTO E &mdash; Main &nbsp;|&nbsp; 8 Years &mdash; Max</strong></td>
+          <td>Main Co. (non-CA, non-MA), Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill grant">Grant &mdash; Jan 1</span></td>
+          <td><strong>160 hrs</strong> (20 days)</td>
+          <td>40 hrs</td>
+          <td class="no-req">No</td>
+          <td class="req">Yes — prorated to sep. date</td>
+          <td>PTO</td>
+        </tr>
+        <!-- PTO MA -->
+        <tr style="background:#1A3D2B">
+          <td colspan="9" style="color:#fff;font-weight:700;font-size:11px;padding:6px 10px;letter-spacing:.5px">
+            MASSACHUSETTS &mdash; PTO (Accrual per Pay Period; MA Wage Act)
+          </td>
+        </tr>
+        <tr style="background:#1F4E79">
+          <td colspan="9" style="color:#fff;font-weight:600;font-size:10px;padding:4px 16px;font-style:italic">
+            &nbsp;&nbsp;Policy Tier B
+          </td>
+        </tr>
+        <tr class="pto-ma" style="background:#F2E8D9">
+          <td><strong>PTO B &mdash; Massachusetts &nbsp;|&nbsp; Start</strong></td>
+          <td>MA employees, Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 1.54 hrs/pp</span></td>
+          <td><strong>80 hrs</strong> (10 days)</td>
+          <td>160 hrs (2.0&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#FFFFFF">
+          <td><strong>PTO B &mdash; Massachusetts &nbsp;|&nbsp; After 1 Year</strong></td>
+          <td>MA employees, Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 1.69 hrs/pp</span></td>
+          <td><strong>88 hrs</strong> (11 days)</td>
+          <td>176 hrs (2.0&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#F2E8D9">
+          <td><strong>PTO B &mdash; Massachusetts &nbsp;|&nbsp; After 2 Years</strong></td>
+          <td>MA employees, Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 1.85 hrs/pp</span></td>
+          <td><strong>96 hrs</strong> (12 days)</td>
+          <td>192 hrs (2.0&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#FFFFFF">
+          <td><strong>PTO B &mdash; Massachusetts &nbsp;|&nbsp; After 3 Years</strong></td>
+          <td>MA employees, Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.0 hrs/pp</span></td>
+          <td><strong>104 hrs</strong> (13 days)</td>
+          <td>208 hrs (2.0&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#F2E8D9">
+          <td><strong>PTO B &mdash; Massachusetts &nbsp;|&nbsp; After 4 Years</strong></td>
+          <td>MA employees, Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.15 hrs/pp</span></td>
+          <td><strong>112 hrs</strong> (14 days)</td>
+          <td>224 hrs (2.0&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#FFFFFF">
+          <td><strong>PTO B &mdash; Massachusetts &nbsp;|&nbsp; After 5 Years</strong></td>
+          <td>MA employees, Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.31 hrs/pp</span></td>
+          <td><strong>120 hrs</strong> (15 days)</td>
+          <td>240 hrs (2.0&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#F2E8D9">
+          <td><strong>PTO B &mdash; Massachusetts &nbsp;|&nbsp; After 6 Years</strong></td>
+          <td>MA employees, Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.46 hrs/pp</span></td>
+          <td><strong>128 hrs</strong> (16 days)</td>
+          <td>256 hrs (2.0&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#FFFFFF">
+          <td><strong>PTO B &mdash; Massachusetts &nbsp;|&nbsp; After 7 Years</strong></td>
+          <td>MA employees, Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.62 hrs/pp</span></td>
+          <td><strong>136 hrs</strong> (17 days)</td>
+          <td>272 hrs (2.0&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#F2E8D9">
+          <td><strong>PTO B &mdash; Massachusetts &nbsp;|&nbsp; After 8 Years</strong></td>
+          <td>MA employees, Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.77 hrs/pp</span></td>
+          <td><strong>144 hrs</strong> (18 days)</td>
+          <td>288 hrs (2.0&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#FFFFFF">
+          <td><strong>PTO B &mdash; Massachusetts &nbsp;|&nbsp; After 9 Years</strong></td>
+          <td>MA employees, Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.92 hrs/pp</span></td>
+          <td><strong>152 hrs</strong> (19 days)</td>
+          <td>304 hrs (2.0&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#F2E8D9">
+          <td><strong>PTO B &mdash; Massachusetts &nbsp;|&nbsp; 10 Years &mdash; Max</strong></td>
+          <td>MA employees, Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 3.08 hrs/pp</span></td>
+          <td><strong>160 hrs</strong> (20 days)</td>
+          <td>320 hrs (2.0&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr style="background:#375623">
+          <td colspan="9" style="color:#fff;font-weight:600;font-size:10px;padding:4px 16px;font-style:italic">
+            &nbsp;&nbsp;Policy Tier C
+          </td>
+        </tr>
+        <tr class="pto-ma" style="background:#EDF7E7">
+          <td><strong>PTO C &mdash; Massachusetts &nbsp;|&nbsp; Start</strong></td>
+          <td>MA employees, Tier C</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.31 hrs/pp</span></td>
+          <td><strong>120 hrs</strong> (15 days)</td>
+          <td>180 hrs (1.5&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#FFFFFF">
+          <td><strong>PTO C &mdash; Massachusetts &nbsp;|&nbsp; After 1 Year</strong></td>
+          <td>MA employees, Tier C</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.46 hrs/pp</span></td>
+          <td><strong>128 hrs</strong> (16 days)</td>
+          <td>192 hrs (1.5&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#EDF7E7">
+          <td><strong>PTO C &mdash; Massachusetts &nbsp;|&nbsp; After 2 Years</strong></td>
+          <td>MA employees, Tier C</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.62 hrs/pp</span></td>
+          <td><strong>136 hrs</strong> (17 days)</td>
+          <td>204 hrs (1.5&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#FFFFFF">
+          <td><strong>PTO C &mdash; Massachusetts &nbsp;|&nbsp; After 3 Years</strong></td>
+          <td>MA employees, Tier C</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.77 hrs/pp</span></td>
+          <td><strong>144 hrs</strong> (18 days)</td>
+          <td>216 hrs (1.5&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#EDF7E7">
+          <td><strong>PTO C &mdash; Massachusetts &nbsp;|&nbsp; After 4 Years</strong></td>
+          <td>MA employees, Tier C</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.92 hrs/pp</span></td>
+          <td><strong>152 hrs</strong> (19 days)</td>
+          <td>228 hrs (1.5&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#FFFFFF">
+          <td><strong>PTO C &mdash; Massachusetts &nbsp;|&nbsp; 5 Years &mdash; Max</strong></td>
+          <td>MA employees, Tier C</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 3.08 hrs/pp</span></td>
+          <td><strong>160 hrs</strong> (20 days)</td>
+          <td>240 hrs (1.5&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr style="background:#7B2C2C">
+          <td colspan="9" style="color:#fff;font-weight:600;font-size:10px;padding:4px 16px;font-style:italic">
+            &nbsp;&nbsp;Policy Tier D
+          </td>
+        </tr>
+        <tr class="pto-ma" style="background:#FBE9E9">
+          <td><strong>PTO D &mdash; Massachusetts &nbsp;|&nbsp; Start</strong></td>
+          <td>MA employees, Tier D</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 3.08 hrs/pp</span></td>
+          <td><strong>160 hrs</strong> (20 days)</td>
+          <td>240 hrs (1.5&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#FFFFFF">
+          <td><strong>PTO D &mdash; Massachusetts &nbsp;|&nbsp; After 1 Year</strong></td>
+          <td>MA employees, Tier D</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 3.23 hrs/pp</span></td>
+          <td><strong>168 hrs</strong> (21 days)</td>
+          <td>252 hrs (1.5&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#FBE9E9">
+          <td><strong>PTO D &mdash; Massachusetts &nbsp;|&nbsp; After 2 Years</strong></td>
+          <td>MA employees, Tier D</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 3.38 hrs/pp</span></td>
+          <td><strong>176 hrs</strong> (22 days)</td>
+          <td>264 hrs (1.5&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#FFFFFF">
+          <td><strong>PTO D &mdash; Massachusetts &nbsp;|&nbsp; After 3 Years</strong></td>
+          <td>MA employees, Tier D</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 3.54 hrs/pp</span></td>
+          <td><strong>184 hrs</strong> (23 days)</td>
+          <td>276 hrs (1.5&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#FBE9E9">
+          <td><strong>PTO D &mdash; Massachusetts &nbsp;|&nbsp; After 4 Years</strong></td>
+          <td>MA employees, Tier D</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 3.69 hrs/pp</span></td>
+          <td><strong>192 hrs</strong> (24 days)</td>
+          <td>288 hrs (1.5&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#FFFFFF">
+          <td><strong>PTO D &mdash; Massachusetts &nbsp;|&nbsp; 5 Years &mdash; Max</strong></td>
+          <td>MA employees, Tier D</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 3.85 hrs/pp</span></td>
+          <td><strong>200 hrs</strong> (25 days)</td>
+          <td>300 hrs (1.5&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr style="background:#6B4F9E">
+          <td colspan="9" style="color:#fff;font-weight:600;font-size:10px;padding:4px 16px;font-style:italic">
+            &nbsp;&nbsp;Policy Tier E
+          </td>
+        </tr>
+        <tr class="pto-ma" style="background:#F0EBF8">
+          <td><strong>PTO E &mdash; Massachusetts &nbsp;|&nbsp; Start</strong></td>
+          <td>MA employees, Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 1.85 hrs/pp</span></td>
+          <td><strong>96 hrs</strong> (12 days)</td>
+          <td>144 hrs (1.5&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#FFFFFF">
+          <td><strong>PTO E &mdash; Massachusetts &nbsp;|&nbsp; After 1 Year</strong></td>
+          <td>MA employees, Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.0 hrs/pp</span></td>
+          <td><strong>104 hrs</strong> (13 days)</td>
+          <td>156 hrs (1.5&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#F0EBF8">
+          <td><strong>PTO E &mdash; Massachusetts &nbsp;|&nbsp; After 2 Years</strong></td>
+          <td>MA employees, Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.15 hrs/pp</span></td>
+          <td><strong>112 hrs</strong> (14 days)</td>
+          <td>168 hrs (1.5&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#FFFFFF">
+          <td><strong>PTO E &mdash; Massachusetts &nbsp;|&nbsp; After 3 Years</strong></td>
+          <td>MA employees, Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.31 hrs/pp</span></td>
+          <td><strong>120 hrs</strong> (15 days)</td>
+          <td>180 hrs (1.5&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#F0EBF8">
+          <td><strong>PTO E &mdash; Massachusetts &nbsp;|&nbsp; After 4 Years</strong></td>
+          <td>MA employees, Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.46 hrs/pp</span></td>
+          <td><strong>128 hrs</strong> (16 days)</td>
+          <td>192 hrs (1.5&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#FFFFFF">
+          <td><strong>PTO E &mdash; Massachusetts &nbsp;|&nbsp; After 5 Years</strong></td>
+          <td>MA employees, Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.62 hrs/pp</span></td>
+          <td><strong>136 hrs</strong> (17 days)</td>
+          <td>204 hrs (1.5&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#F0EBF8">
+          <td><strong>PTO E &mdash; Massachusetts &nbsp;|&nbsp; After 6 Years</strong></td>
+          <td>MA employees, Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.77 hrs/pp</span></td>
+          <td><strong>144 hrs</strong> (18 days)</td>
+          <td>216 hrs (1.5&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#FFFFFF">
+          <td><strong>PTO E &mdash; Massachusetts &nbsp;|&nbsp; After 7 Years</strong></td>
+          <td>MA employees, Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.92 hrs/pp</span></td>
+          <td><strong>152 hrs</strong> (19 days)</td>
+          <td>228 hrs (1.5&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ma" style="background:#F0EBF8">
+          <td><strong>PTO E &mdash; Massachusetts &nbsp;|&nbsp; 8 Years &mdash; Max</strong></td>
+          <td>MA employees, Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 3.08 hrs/pp</span></td>
+          <td><strong>160 hrs</strong> (20 days)</td>
+          <td>240 hrs (1.5&times; annual)</td>
+          <td class="rec">Recommended (show balance)</td>
+          <td class="req">YES &mdash; MA Wage Act</td>
+          <td>PTO</td>
+        </tr>
+        <!-- PTO CA -->
+        <tr style="background:#5C1A1A">
+          <td colspan="9" style="color:#fff;font-weight:700;font-size:11px;padding:6px 10px;letter-spacing:.5px">
+            CALIFORNIA &mdash; PTO (Accrual per Pay Period; CA Vested Wage; No Forfeiture)
+          </td>
+        </tr>
+        <tr style="background:#1F4E79">
+          <td colspan="9" style="color:#fff;font-weight:600;font-size:10px;padding:4px 16px;font-style:italic">
+            &nbsp;&nbsp;Policy Tier B
+          </td>
+        </tr>
+        <tr class="pto-ca" style="background:#F2E8D9">
+          <td><strong>PTO B &mdash; California &nbsp;|&nbsp; Start</strong></td>
+          <td>CA employees, Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 1.54 hrs/pp</span></td>
+          <td><strong>80 hrs</strong> (10 days)</td>
+          <td>120 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#FFFFFF">
+          <td><strong>PTO B &mdash; California &nbsp;|&nbsp; After 1 Year</strong></td>
+          <td>CA employees, Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 1.69 hrs/pp</span></td>
+          <td><strong>88 hrs</strong> (11 days)</td>
+          <td>132 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#F2E8D9">
+          <td><strong>PTO B &mdash; California &nbsp;|&nbsp; After 2 Years</strong></td>
+          <td>CA employees, Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 1.85 hrs/pp</span></td>
+          <td><strong>96 hrs</strong> (12 days)</td>
+          <td>144 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#FFFFFF">
+          <td><strong>PTO B &mdash; California &nbsp;|&nbsp; After 3 Years</strong></td>
+          <td>CA employees, Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.0 hrs/pp</span></td>
+          <td><strong>104 hrs</strong> (13 days)</td>
+          <td>156 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#F2E8D9">
+          <td><strong>PTO B &mdash; California &nbsp;|&nbsp; After 4 Years</strong></td>
+          <td>CA employees, Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.15 hrs/pp</span></td>
+          <td><strong>112 hrs</strong> (14 days)</td>
+          <td>168 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#FFFFFF">
+          <td><strong>PTO B &mdash; California &nbsp;|&nbsp; After 5 Years</strong></td>
+          <td>CA employees, Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.31 hrs/pp</span></td>
+          <td><strong>120 hrs</strong> (15 days)</td>
+          <td>180 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#F2E8D9">
+          <td><strong>PTO B &mdash; California &nbsp;|&nbsp; After 6 Years</strong></td>
+          <td>CA employees, Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.46 hrs/pp</span></td>
+          <td><strong>128 hrs</strong> (16 days)</td>
+          <td>192 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#FFFFFF">
+          <td><strong>PTO B &mdash; California &nbsp;|&nbsp; After 7 Years</strong></td>
+          <td>CA employees, Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.62 hrs/pp</span></td>
+          <td><strong>136 hrs</strong> (17 days)</td>
+          <td>204 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#F2E8D9">
+          <td><strong>PTO B &mdash; California &nbsp;|&nbsp; After 8 Years</strong></td>
+          <td>CA employees, Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.77 hrs/pp</span></td>
+          <td><strong>144 hrs</strong> (18 days)</td>
+          <td>216 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#FFFFFF">
+          <td><strong>PTO B &mdash; California &nbsp;|&nbsp; After 9 Years</strong></td>
+          <td>CA employees, Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.92 hrs/pp</span></td>
+          <td><strong>152 hrs</strong> (19 days)</td>
+          <td>228 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#F2E8D9">
+          <td><strong>PTO B &mdash; California &nbsp;|&nbsp; 10 Years &mdash; Max</strong></td>
+          <td>CA employees, Tier B</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 3.08 hrs/pp</span></td>
+          <td><strong>160 hrs</strong> (20 days)</td>
+          <td>240 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr style="background:#375623">
+          <td colspan="9" style="color:#fff;font-weight:600;font-size:10px;padding:4px 16px;font-style:italic">
+            &nbsp;&nbsp;Policy Tier C
+          </td>
+        </tr>
+        <tr class="pto-ca" style="background:#EDF7E7">
+          <td><strong>PTO C &mdash; California &nbsp;|&nbsp; Start</strong></td>
+          <td>CA employees, Tier C</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.31 hrs/pp</span></td>
+          <td><strong>120 hrs</strong> (15 days)</td>
+          <td>180 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#FFFFFF">
+          <td><strong>PTO C &mdash; California &nbsp;|&nbsp; After 1 Year</strong></td>
+          <td>CA employees, Tier C</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.46 hrs/pp</span></td>
+          <td><strong>128 hrs</strong> (16 days)</td>
+          <td>192 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#EDF7E7">
+          <td><strong>PTO C &mdash; California &nbsp;|&nbsp; After 2 Years</strong></td>
+          <td>CA employees, Tier C</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.62 hrs/pp</span></td>
+          <td><strong>136 hrs</strong> (17 days)</td>
+          <td>204 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#FFFFFF">
+          <td><strong>PTO C &mdash; California &nbsp;|&nbsp; After 3 Years</strong></td>
+          <td>CA employees, Tier C</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.77 hrs/pp</span></td>
+          <td><strong>144 hrs</strong> (18 days)</td>
+          <td>216 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#EDF7E7">
+          <td><strong>PTO C &mdash; California &nbsp;|&nbsp; After 4 Years</strong></td>
+          <td>CA employees, Tier C</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.92 hrs/pp</span></td>
+          <td><strong>152 hrs</strong> (19 days)</td>
+          <td>228 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#FFFFFF">
+          <td><strong>PTO C &mdash; California &nbsp;|&nbsp; 5 Years &mdash; Max</strong></td>
+          <td>CA employees, Tier C</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 3.08 hrs/pp</span></td>
+          <td><strong>160 hrs</strong> (20 days)</td>
+          <td>240 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr style="background:#7B2C2C">
+          <td colspan="9" style="color:#fff;font-weight:600;font-size:10px;padding:4px 16px;font-style:italic">
+            &nbsp;&nbsp;Policy Tier D
+          </td>
+        </tr>
+        <tr class="pto-ca" style="background:#FBE9E9">
+          <td><strong>PTO D &mdash; California &nbsp;|&nbsp; Start</strong></td>
+          <td>CA employees, Tier D</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 3.08 hrs/pp</span></td>
+          <td><strong>160 hrs</strong> (20 days)</td>
+          <td>240 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#FFFFFF">
+          <td><strong>PTO D &mdash; California &nbsp;|&nbsp; After 1 Year</strong></td>
+          <td>CA employees, Tier D</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 3.23 hrs/pp</span></td>
+          <td><strong>168 hrs</strong> (21 days)</td>
+          <td>252 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#FBE9E9">
+          <td><strong>PTO D &mdash; California &nbsp;|&nbsp; After 2 Years</strong></td>
+          <td>CA employees, Tier D</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 3.38 hrs/pp</span></td>
+          <td><strong>176 hrs</strong> (22 days)</td>
+          <td>264 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#FFFFFF">
+          <td><strong>PTO D &mdash; California &nbsp;|&nbsp; After 3 Years</strong></td>
+          <td>CA employees, Tier D</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 3.54 hrs/pp</span></td>
+          <td><strong>184 hrs</strong> (23 days)</td>
+          <td>276 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#FBE9E9">
+          <td><strong>PTO D &mdash; California &nbsp;|&nbsp; After 4 Years</strong></td>
+          <td>CA employees, Tier D</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 3.69 hrs/pp</span></td>
+          <td><strong>192 hrs</strong> (24 days)</td>
+          <td>288 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#FFFFFF">
+          <td><strong>PTO D &mdash; California &nbsp;|&nbsp; 5 Years &mdash; Max</strong></td>
+          <td>CA employees, Tier D</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 3.85 hrs/pp</span></td>
+          <td><strong>200 hrs</strong> (25 days)</td>
+          <td>300 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr style="background:#6B4F9E">
+          <td colspan="9" style="color:#fff;font-weight:600;font-size:10px;padding:4px 16px;font-style:italic">
+            &nbsp;&nbsp;Policy Tier E
+          </td>
+        </tr>
+        <tr class="pto-ca" style="background:#F0EBF8">
+          <td><strong>PTO E &mdash; California &nbsp;|&nbsp; Start</strong></td>
+          <td>CA employees, Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 1.85 hrs/pp</span></td>
+          <td><strong>96 hrs</strong> (12 days)</td>
+          <td>144 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#FFFFFF">
+          <td><strong>PTO E &mdash; California &nbsp;|&nbsp; After 1 Year</strong></td>
+          <td>CA employees, Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.0 hrs/pp</span></td>
+          <td><strong>104 hrs</strong> (13 days)</td>
+          <td>156 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#F0EBF8">
+          <td><strong>PTO E &mdash; California &nbsp;|&nbsp; After 2 Years</strong></td>
+          <td>CA employees, Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.15 hrs/pp</span></td>
+          <td><strong>112 hrs</strong> (14 days)</td>
+          <td>168 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#FFFFFF">
+          <td><strong>PTO E &mdash; California &nbsp;|&nbsp; After 3 Years</strong></td>
+          <td>CA employees, Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.31 hrs/pp</span></td>
+          <td><strong>120 hrs</strong> (15 days)</td>
+          <td>180 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#F0EBF8">
+          <td><strong>PTO E &mdash; California &nbsp;|&nbsp; After 4 Years</strong></td>
+          <td>CA employees, Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.46 hrs/pp</span></td>
+          <td><strong>128 hrs</strong> (16 days)</td>
+          <td>192 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#FFFFFF">
+          <td><strong>PTO E &mdash; California &nbsp;|&nbsp; After 5 Years</strong></td>
+          <td>CA employees, Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.62 hrs/pp</span></td>
+          <td><strong>136 hrs</strong> (17 days)</td>
+          <td>204 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#F0EBF8">
+          <td><strong>PTO E &mdash; California &nbsp;|&nbsp; After 6 Years</strong></td>
+          <td>CA employees, Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.77 hrs/pp</span></td>
+          <td><strong>144 hrs</strong> (18 days)</td>
+          <td>216 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#FFFFFF">
+          <td><strong>PTO E &mdash; California &nbsp;|&nbsp; After 7 Years</strong></td>
+          <td>CA employees, Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 2.92 hrs/pp</span></td>
+          <td><strong>152 hrs</strong> (19 days)</td>
+          <td>228 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <tr class="pto-ca" style="background:#F0EBF8">
+          <td><strong>PTO E &mdash; California &nbsp;|&nbsp; 8 Years &mdash; Max</strong></td>
+          <td>CA employees, Tier E</td>
+          <td>PTO</td>
+          <td><span class="pill accrual">Accrual 3.08 hrs/pp</span></td>
+          <td><strong>160 hrs</strong> (20 days)</td>
+          <td>240 hrs (1.5&times;; no forfeiture)</td>
+          <td class="req">YES &mdash; CA wage stmt law</td>
+          <td class="req">YES &mdash; CA law</td>
+          <td>PTO</td>
+        </tr>
+        <!-- Sick Main -->
+        <tr class="sick-main">
+          <td><strong>Sick Leave — Main Company</strong></td>
+          <td>All states (base policy)</td>
+          <td>Sick</td>
+          <td><span class="pill accrual">Accrual 1/30 hrs</span></td>
+          <td>40</td>
+          <td>40</td>
+          <td>Varies — see state/local addendum</td>
+          <td>No (unless law)</td>
+          <td>Sick</td>
+        </tr>
+        <!-- Sick State -->
+        <tr class="sick-state">
+          <td><strong>Sick — Arizona (EPST)</strong></td>
+          <td>AZ employees</td>
+          <td>Sick</td>
+          <td><span class="pill accrual">Accrual 1/30 hrs</span></td>
+          <td>40</td>
+          <td>40</td>
+          <td class="req">YES — accrued YTD, used YTD, available bal.</td>
+          <td>No</td>
+          <td>Sick</td>
+        </tr>
+        <tr class="sick-state">
+          <td><strong>Sick — California</strong></td>
+          <td>CA employees</td>
+          <td>Sick</td>
+          <td><span class="pill accrual">Accrual (NE) / Grant (Exempt)</span></td>
+          <td>40 (use) / 80 (cap NE)</td>
+          <td>NE: 80; Exempt: 0</td>
+          <td class="req">YES — available balance (wage stmt or separate writing)</td>
+          <td>No</td>
+          <td>Sick</td>
+        </tr>
+        <tr class="sick-state">
+          <td><strong>Sick — Connecticut</strong></td>
+          <td>CT employees</td>
+          <td>Sick</td>
+          <td><span class="pill accrual">Accrual 1/30 hrs</span></td>
+          <td>40</td>
+          <td>40</td>
+          <td class="req">YES — available balance (each pay period)</td>
+          <td>No</td>
+          <td>Sick</td>
+        </tr>
+
+        <tr class="sick-state">
+          <td><strong>Sick — Illinois (PLAWA)</strong></td>
+          <td>All Illinois employees</td>
+          <td>Sick</td>
+          <td><span class="pill accrual">Accrual 1/30 hrs</span></td>
+          <td>40</td>
+          <td>40</td>
+          <td class="req">YES — available balance (pay stub or written notice)</td>
+          <td>Via PTO policy (IL PLAWA)</td>
+          <td>PTO / Sick</td>
+        </tr>
+        <tr class="sick-state">
+          <td><strong>Sick — Massachusetts (MEST)</strong></td>
+          <td>MA employees</td>
+          <td>Sick</td>
+          <td><span class="pill accrual">Accrual 1/30 hrs</span></td>
+          <td>40</td>
+          <td>40</td>
+          <td class="req">YES — available balance (pay stub or accessible system)</td>
+          <td>No</td>
+          <td>Sick</td>
+        </tr>
+        <tr class="sick-state">
+          <td><strong>Sick — Michigan (MEST)</strong></td>
+          <td>MI employees</td>
+          <td>Sick</td>
+          <td><span class="pill accrual">Accrual 1/30 hrs</span></td>
+          <td>72 (usage)</td>
+          <td>72</td>
+          <td class="req">YES — available balance (pay stub or written notice)</td>
+          <td>No</td>
+          <td>Sick</td>
+        </tr>
+        <tr class="sick-state">
+          <td><strong>ESST — Minnesota</strong></td>
+          <td>MN employees</td>
+          <td>Sick</td>
+          <td><span class="pill accrual">Accrual 1/30 hrs</span></td>
+          <td>48 / 80 total cap</td>
+          <td>80 (total cap)</td>
+          <td class="req">YES — accrued YTD, used YTD, available bal.</td>
+          <td>No</td>
+          <td>Sick</td>
+        </tr>
+
+        <tr class="sick-state">
+          <td><strong>ESSL — New Jersey</strong></td>
+          <td>NJ employees</td>
+          <td>Sick</td>
+          <td><span class="pill accrual">Accrual 1/30 hrs</span></td>
+          <td>40</td>
+          <td>40</td>
+          <td class="req">YES — accrued in period, accrued YTD, used YTD, available bal.</td>
+          <td>No</td>
+          <td>Sick</td>
+        </tr>
+        
+        <tr class="sick-state">
+          <td><strong>Paid Sick &amp; Safe — New York</strong></td>
+          <td>NY employees</td>
+          <td>Sick</td>
+          <td><span class="pill accrual">Accrual 1/30 hrs</span></td>
+          <td>56</td>
+          <td>56</td>
+          <td class="req">YES (on request) — available balance</td>
+          <td>No</td>
+          <td>Sick</td>
+        </tr>
+        <tr class="sick-state">
+          <td><strong>Safe &amp; Sick — NYC (ESSTA)</strong></td>
+          <td>NYC employees</td>
+          <td>Sick</td>
+          <td><span class="pill accrual">Accrual 1/30 hrs</span></td>
+          <td>56</td>
+          <td>56</td>
+          <td class="req">YES — accrued in period, used in period, available bal. + doc reimbursement</td>
+          <td>No</td>
+          <td>Sick</td>
+        </tr>
+        <tr class="sick-state">
+          <td><strong>Paid Prenatal Leave — NY (PPL)</strong></td>
+          <td>NY employees receiving prenatal care</td>
+          <td>Leave</td>
+          <td><span class="pill flat">Flat 20-hr grant / 52 wks</span></td>
+          <td>20</td>
+          <td>None</td>
+          <td class="req">YES (NYC) — used in period + remaining available bal.</td>
+          <td>No</td>
+          <td>Separate</td>
+        </tr>
+        <tr class="sick-state">
+          <td><strong>NYC Protected Time Off</strong></td>
+          <td>NYC employees</td>
+          <td>Leave (Unpaid)</td>
+          <td><span class="pill flat">Grant 32 hrs — Jan 1</span></td>
+          <td>32</td>
+          <td>None</td>
+          <td class="req">YES — available balance (where req. by law)</td>
+          <td>No</td>
+          <td>Separate (unpaid)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANE 2 — PTO MAIN
+     ══════════════════════════════════════════════════════════════ -->
+<div id="pane-pto-main" class="pane">
+  <div class="sec-hdr main-co"><div class="dot"></div>MAIN COMPANY — PTO Policies (All States Except CA &amp; MA)</div>
+  <p style="font-size:12px;color:#555;margin-bottom:14px;">
+    Grant-based (front-loaded). Awarded annually on January 1. New hires receive a prorated allotment from their hire date.
+    For administrative purposes, PTO is treated as earned on a pro-rata basis throughout the year.
+    Carryover capped at 40 hours; excess forfeited where law permits. 90-day waiting period to use. Min increment: 4 hours.
+    <strong>Payout on separation: Company pays out PTO accrued through the separation date.</strong> No pay statement requirement.
+  </p>
+  <div class="cards" id="cards-main-pto"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANE 3 — PTO CA & MA (COMBINED)
+     ══════════════════════════════════════════════════════════════ -->
+<div id="pane-pto-states" class="pane">
+  <div class="sec-hdr ma"><div class="dot"></div>MASSACHUSETTS — PTO Policies (Accrual-Based; MA Wage Act Governs)</div>
+  <p style="font-size:12px;color:#555;margin-bottom:14px;">
+    Accrues incrementally each payroll period starting from date of hire. Active work only; no accrual during unpaid LOA.
+    Once accrued, PTO is considered earned wages under MA law. Accrual cap = 1.5&times; annual amount.
+    <strong>Payout required on separation.</strong> ADP Self-Service used for requests (30-day advance notice required).
+    Min increment: 4 hours. 90-day waiting period.
+  </p>
+  <div class="cards" id="cards-ma-pto"></div>
+
+  <div style="height:24px;"></div>
+
+  <div class="sec-hdr ca"><div class="dot"></div>CALIFORNIA — PTO Policies (Accrual; Vested Wage; No Use-It-or-Lose-It)</div>
+  <p style="font-size:12px;color:#555;margin-bottom:14px;">
+    Accrues per payroll period from date of hire. PTO is a vested wage under CA law — <strong>forfeiture is prohibited.</strong>
+    Accrual cap = 1.5&times; annual amount (accrual pauses at cap; resumes when balance drops below cap).
+    Unused PTO carries over year to year with no year-end reduction.
+    <strong>Full payout required on separation at final rate of pay.</strong>
+    CA law requires PTO balance on each itemized wage statement or separate writing on each pay date.
+    Min increment: 4 hours. 90-day waiting period.
+  </p>
+  <div class="cards" id="cards-ca-pto"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANE 5 — SICK MAIN
+     ══════════════════════════════════════════════════════════════ -->
+<div id="pane-sick-main" class="pane">
+  <div class="sec-hdr sick"><div class="dot"></div>MAIN COMPANY — General Sick Leave Policy</div>
+  <p style="font-size:12px;color:#555;margin-bottom:14px;">
+    Separate bank from PTO. State and local addenda control where they provide greater rights.
+    Accrual begins day 1 of employment. Exempt employees presumed 40 hrs/wk for accrual. Min increment: 1 hour.
+    Employees may use PTO after sick leave is exhausted.
+  </p>
+  <div class="cards">
+    <div class="card">
+      <div class="card-hdr sick">Sick Leave — Main Company <span class="chip">All States (Base)</span></div>
+      <div class="card-body">
+        <div class="field-row"><span class="field-label">Accrual Type</span><span class="field-val"><span class="badge-accrual earn">Accrual</span> 1 hour per 30 hours worked</span></div>
+        <div class="field-row"><span class="field-label">Annual Max</span><span class="field-val">40 hours</span></div>
+        <div class="field-row"><span class="field-label">Annual Usage Limit</span><span class="field-val">40 hours per calendar year</span></div>
+        <div class="field-row"><span class="field-label">Balance Cap</span><span class="field-val">40 hours (accrual stops at cap)</span></div>
+        <div class="field-row"><span class="field-label">Carryover</span><span class="field-val">Yes, up to 40-hr cap</span></div>
+        <div class="field-row"><span class="field-label">Waiting Period</span><span class="field-val">None — accrues from day 1; available as earned</span></div>
+        <div class="field-row"><span class="field-label">Min Increment</span><span class="field-val">1 hour</span></div>
+        <div class="field-row"><span class="field-label">Pay Stmt Req?</span><span class="field-val">Where required by applicable law</span></div>
+        <div class="field-row"><span class="field-label">Payout on Sep?</span><span class="field-val no-req">No (unless required by law)</span></div>
+        <div class="note-row">Separate bank from PTO in ADP. State addenda override this policy where they provide greater benefits. Employees may use PTO after sick leave is exhausted.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANE 6 — SICK STATE
+     ══════════════════════════════════════════════════════════════ -->
+<div id="pane-sick-state" class="pane">
+  <div class="sec-hdr state"><div class="dot"></div>STATE &amp; LOCAL SICK LEAVE ADDENDA</div>
+  <p style="font-size:12px;color:#555;margin-bottom:14px;">
+    Each addendum controls where it provides greater rights than the main sick leave policy.
+    All use a separate ADP sick leave bank from PTO unless otherwise noted.
+  </p>
+  <div class="cards" id="cards-sick-state"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANE — PTO ACCRUAL SCHEDULES
+     ══════════════════════════════════════════════════════════════ -->
+<div id="pane-accrual-schedules" class="pane">
+  <div class="sec-hdr main-co"><div class="dot"></div>PTO ACCRUAL SCHEDULES — Tenure-Based Hour and Rate Tables</div>
+  <p style="font-size:12px;color:#555;margin-bottom:20px">
+    These schedules were extracted directly from the 12 individual PTO policy documents (Supplemental, MA, and CA variants for tiers B, C, D, and E).
+    The day counts and accrual rates are <strong>identical across Main, MA, and CA</strong> for each tier &mdash; only the policy mechanics differ
+    (Main = Grant front-loaded Jan 1; MA and CA = Accrual per pay period).
+    Use these tables when configuring service-band accrual rules in ADP.
+  </p>
+  
+  <div style="margin-bottom:32px">
+    <div style="background:#1F4E79;color:#fff;padding:10px 16px;border-radius:6px 6px 0 0;font-weight:700;font-size:14px">
+      Policy B Tier &mdash; Starts at 10 days (80 hrs) at hire. Increases 1 day per year, maxing at 20 days (160 hrs) after 10 years.
+    </div>
+    <div style="font-size:11px;color:#555;padding:8px 12px;background:#F8FAFC;border:1px solid #E2E8F0;border-top:none">
+      <strong>Applies to:</strong> Policy B &mdash; Main Company (Grant), Massachusetts (Accrual), and California (Accrual). 
+      The days and rates are the same across all three groups. Annual Hours = PTO Days &times; 8.
+      MA/CA Accrual Cap = 2.0&times; current-tier annual hours for Policy B (accrual pauses at cap).
+    </div>
+    <table style="width:100%;border-collapse:collapse;border:1px solid #E2E8F0;border-top:none;font-size:12px">
+      <thead>
+        <tr style="background:#1F4E79;color:#fff">
+          <th style="padding:8px 10px;text-align:left;font-weight:600">Years of Service</th>
+          <th style="padding:8px 10px;text-align:center;font-weight:600">PTO Days</th>
+          <th style="padding:8px 10px;text-align:center;font-weight:600">Annual Hours</th>
+          <th style="padding:8px 10px;text-align:center;font-weight:600">Accrual Rate (hrs/pay period)</th>
+          <th style="padding:8px 10px;text-align:center;font-weight:600">MA/CA Accrual Cap (1.5&times;)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#F2E8D9">
+          <td style="padding:7px 10px">Start</td>
+          <td style="padding:7px 10px;text-align:center">10</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">80</td>
+          <td style="padding:7px 10px;text-align:center">1.54</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">120</td>
+        </tr>
+        <tr style="background:#FFFFFF">
+          <td style="padding:7px 10px">After 1 Year</td>
+          <td style="padding:7px 10px;text-align:center">11</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">88</td>
+          <td style="padding:7px 10px;text-align:center">1.69</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">132</td>
+        </tr>
+        <tr style="background:#F2E8D9">
+          <td style="padding:7px 10px">After 2 Years</td>
+          <td style="padding:7px 10px;text-align:center">12</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">96</td>
+          <td style="padding:7px 10px;text-align:center">1.85</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">144</td>
+        </tr>
+        <tr style="background:#FFFFFF">
+          <td style="padding:7px 10px">After 3 Years</td>
+          <td style="padding:7px 10px;text-align:center">13</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">104</td>
+          <td style="padding:7px 10px;text-align:center">2.0</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">156</td>
+        </tr>
+        <tr style="background:#F2E8D9">
+          <td style="padding:7px 10px">After 4 Years</td>
+          <td style="padding:7px 10px;text-align:center">14</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">112</td>
+          <td style="padding:7px 10px;text-align:center">2.15</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">168</td>
+        </tr>
+        <tr style="background:#FFFFFF">
+          <td style="padding:7px 10px">After 5 Years</td>
+          <td style="padding:7px 10px;text-align:center">15</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">120</td>
+          <td style="padding:7px 10px;text-align:center">2.31</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">180</td>
+        </tr>
+        <tr style="background:#F2E8D9">
+          <td style="padding:7px 10px">After 6 Years</td>
+          <td style="padding:7px 10px;text-align:center">16</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">128</td>
+          <td style="padding:7px 10px;text-align:center">2.46</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">192</td>
+        </tr>
+        <tr style="background:#FFFFFF">
+          <td style="padding:7px 10px">After 7 Years</td>
+          <td style="padding:7px 10px;text-align:center">17</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">136</td>
+          <td style="padding:7px 10px;text-align:center">2.62</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">204</td>
+        </tr>
+        <tr style="background:#F2E8D9">
+          <td style="padding:7px 10px">After 8 Years</td>
+          <td style="padding:7px 10px;text-align:center">18</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">144</td>
+          <td style="padding:7px 10px;text-align:center">2.77</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">216</td>
+        </tr>
+        <tr style="background:#FFFFFF">
+          <td style="padding:7px 10px">After 9 Years</td>
+          <td style="padding:7px 10px;text-align:center">19</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">152</td>
+          <td style="padding:7px 10px;text-align:center">2.92</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">228</td>
+        </tr>
+        <tr style="background:#F2E8D9">
+          <td style="padding:7px 10px">10 Years — Max</td>
+          <td style="padding:7px 10px;text-align:center">20</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">160</td>
+          <td style="padding:7px 10px;text-align:center">3.08</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">240</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="margin-bottom:32px">
+    <div style="background:#375623;color:#fff;padding:10px 16px;border-radius:6px 6px 0 0;font-weight:700;font-size:14px">
+      Policy C Tier &mdash; Starts at 15 days (120 hrs) at hire. Increases 1 day per year, maxing at 20 days (160 hrs) after 5 years.
+    </div>
+    <div style="font-size:11px;color:#555;padding:8px 12px;background:#F8FAFC;border:1px solid #E2E8F0;border-top:none">
+      <strong>Applies to:</strong> Policy C &mdash; Main Company (Grant), Massachusetts (Accrual), and California (Accrual). 
+      The days and rates are the same across all three groups. Annual Hours = PTO Days &times; 8.
+      MA/CA Accrual Cap = 2.0&times; current-tier annual hours for Policy B (accrual pauses at cap).
+    </div>
+    <table style="width:100%;border-collapse:collapse;border:1px solid #E2E8F0;border-top:none;font-size:12px">
+      <thead>
+        <tr style="background:#375623;color:#fff">
+          <th style="padding:8px 10px;text-align:left;font-weight:600">Years of Service</th>
+          <th style="padding:8px 10px;text-align:center;font-weight:600">PTO Days</th>
+          <th style="padding:8px 10px;text-align:center;font-weight:600">Annual Hours</th>
+          <th style="padding:8px 10px;text-align:center;font-weight:600">Accrual Rate (hrs/pay period)</th>
+          <th style="padding:8px 10px;text-align:center;font-weight:600">MA/CA Accrual Cap (1.5&times;)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#EDF5E0">
+          <td style="padding:7px 10px">Start</td>
+          <td style="padding:7px 10px;text-align:center">15</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">120</td>
+          <td style="padding:7px 10px;text-align:center">2.31</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">180</td>
+        </tr>
+        <tr style="background:#FFFFFF">
+          <td style="padding:7px 10px">After 1 Year</td>
+          <td style="padding:7px 10px;text-align:center">16</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">128</td>
+          <td style="padding:7px 10px;text-align:center">2.46</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">192</td>
+        </tr>
+        <tr style="background:#EDF5E0">
+          <td style="padding:7px 10px">After 2 Years</td>
+          <td style="padding:7px 10px;text-align:center">17</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">136</td>
+          <td style="padding:7px 10px;text-align:center">2.62</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">204</td>
+        </tr>
+        <tr style="background:#FFFFFF">
+          <td style="padding:7px 10px">After 3 Years</td>
+          <td style="padding:7px 10px;text-align:center">18</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">144</td>
+          <td style="padding:7px 10px;text-align:center">2.77</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">216</td>
+        </tr>
+        <tr style="background:#EDF5E0">
+          <td style="padding:7px 10px">After 4 Years</td>
+          <td style="padding:7px 10px;text-align:center">19</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">152</td>
+          <td style="padding:7px 10px;text-align:center">2.92</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">228</td>
+        </tr>
+        <tr style="background:#FFFFFF">
+          <td style="padding:7px 10px">5 Years — Max</td>
+          <td style="padding:7px 10px;text-align:center">20</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">160</td>
+          <td style="padding:7px 10px;text-align:center">3.08</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">240</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="margin-bottom:32px">
+    <div style="background:#7B2C2C;color:#fff;padding:10px 16px;border-radius:6px 6px 0 0;font-weight:700;font-size:14px">
+      Policy D Tier &mdash; Starts at 20 days (160 hrs) at hire. Increases 1 day per year, maxing at 25 days (200 hrs) after 5 years.
+    </div>
+    <div style="font-size:11px;color:#555;padding:8px 12px;background:#F8FAFC;border:1px solid #E2E8F0;border-top:none">
+      <strong>Applies to:</strong> Policy D &mdash; Main Company (Grant), Massachusetts (Accrual), and California (Accrual). 
+      The days and rates are the same across all three groups. Annual Hours = PTO Days &times; 8.
+      MA/CA Accrual Cap = 2.0&times; current-tier annual hours for Policy B (accrual pauses at cap).
+    </div>
+    <table style="width:100%;border-collapse:collapse;border:1px solid #E2E8F0;border-top:none;font-size:12px">
+      <thead>
+        <tr style="background:#7B2C2C;color:#fff">
+          <th style="padding:8px 10px;text-align:left;font-weight:600">Years of Service</th>
+          <th style="padding:8px 10px;text-align:center;font-weight:600">PTO Days</th>
+          <th style="padding:8px 10px;text-align:center;font-weight:600">Annual Hours</th>
+          <th style="padding:8px 10px;text-align:center;font-weight:600">Accrual Rate (hrs/pay period)</th>
+          <th style="padding:8px 10px;text-align:center;font-weight:600">MA/CA Accrual Cap (1.5&times;)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#FEF2F2">
+          <td style="padding:7px 10px">Start</td>
+          <td style="padding:7px 10px;text-align:center">20</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">160</td>
+          <td style="padding:7px 10px;text-align:center">3.08</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">240</td>
+        </tr>
+        <tr style="background:#FFFFFF">
+          <td style="padding:7px 10px">After 1 Year</td>
+          <td style="padding:7px 10px;text-align:center">21</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">168</td>
+          <td style="padding:7px 10px;text-align:center">3.23</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">252</td>
+        </tr>
+        <tr style="background:#FEF2F2">
+          <td style="padding:7px 10px">After 2 Years</td>
+          <td style="padding:7px 10px;text-align:center">22</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">176</td>
+          <td style="padding:7px 10px;text-align:center">3.38</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">264</td>
+        </tr>
+        <tr style="background:#FFFFFF">
+          <td style="padding:7px 10px">After 3 Years</td>
+          <td style="padding:7px 10px;text-align:center">23</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">184</td>
+          <td style="padding:7px 10px;text-align:center">3.54</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">276</td>
+        </tr>
+        <tr style="background:#FEF2F2">
+          <td style="padding:7px 10px">After 4 Years</td>
+          <td style="padding:7px 10px;text-align:center">24</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">192</td>
+          <td style="padding:7px 10px;text-align:center">3.69</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">288</td>
+        </tr>
+        <tr style="background:#FFFFFF">
+          <td style="padding:7px 10px">5 Years — Max</td>
+          <td style="padding:7px 10px;text-align:center">25</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">200</td>
+          <td style="padding:7px 10px;text-align:center">3.85</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">300</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="margin-bottom:32px">
+    <div style="background:#6B4F9E;color:#fff;padding:10px 16px;border-radius:6px 6px 0 0;font-weight:700;font-size:14px">
+      Policy E Tier &mdash; Starts at 12 days (96 hrs) at hire. Increases 1 day per year, maxing at 20 days (160 hrs) after 8 years.
+    </div>
+    <div style="font-size:11px;color:#555;padding:8px 12px;background:#F8FAFC;border:1px solid #E2E8F0;border-top:none">
+      <strong>Applies to:</strong> Policy E &mdash; Main Company (Grant), Massachusetts (Accrual), and California (Accrual). 
+      The days and rates are the same across all three groups. Annual Hours = PTO Days &times; 8.
+      MA/CA Accrual Cap = 2.0&times; current-tier annual hours for Policy B (accrual pauses at cap).
+    </div>
+    <table style="width:100%;border-collapse:collapse;border:1px solid #E2E8F0;border-top:none;font-size:12px">
+      <thead>
+        <tr style="background:#6B4F9E;color:#fff">
+          <th style="padding:8px 10px;text-align:left;font-weight:600">Years of Service</th>
+          <th style="padding:8px 10px;text-align:center;font-weight:600">PTO Days</th>
+          <th style="padding:8px 10px;text-align:center;font-weight:600">Annual Hours</th>
+          <th style="padding:8px 10px;text-align:center;font-weight:600">Accrual Rate (hrs/pay period)</th>
+          <th style="padding:8px 10px;text-align:center;font-weight:600">MA/CA Accrual Cap (1.5&times;)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#EDE8E0">
+          <td style="padding:7px 10px">Start</td>
+          <td style="padding:7px 10px;text-align:center">12</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">96</td>
+          <td style="padding:7px 10px;text-align:center">1.85</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">144</td>
+        </tr>
+        <tr style="background:#FFFFFF">
+          <td style="padding:7px 10px">After 1 Year</td>
+          <td style="padding:7px 10px;text-align:center">13</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">104</td>
+          <td style="padding:7px 10px;text-align:center">2.0</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">156</td>
+        </tr>
+        <tr style="background:#EDE8E0">
+          <td style="padding:7px 10px">After 2 Years</td>
+          <td style="padding:7px 10px;text-align:center">14</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">112</td>
+          <td style="padding:7px 10px;text-align:center">2.15</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">168</td>
+        </tr>
+        <tr style="background:#FFFFFF">
+          <td style="padding:7px 10px">After 3 Years</td>
+          <td style="padding:7px 10px;text-align:center">15</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">120</td>
+          <td style="padding:7px 10px;text-align:center">2.31</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">180</td>
+        </tr>
+        <tr style="background:#EDE8E0">
+          <td style="padding:7px 10px">After 4 Years</td>
+          <td style="padding:7px 10px;text-align:center">16</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">128</td>
+          <td style="padding:7px 10px;text-align:center">2.46</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">192</td>
+        </tr>
+        <tr style="background:#FFFFFF">
+          <td style="padding:7px 10px">After 5 Years</td>
+          <td style="padding:7px 10px;text-align:center">17</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">136</td>
+          <td style="padding:7px 10px;text-align:center">2.62</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">204</td>
+        </tr>
+        <tr style="background:#EDE8E0">
+          <td style="padding:7px 10px">After 6 Years</td>
+          <td style="padding:7px 10px;text-align:center">18</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">144</td>
+          <td style="padding:7px 10px;text-align:center">2.77</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">216</td>
+        </tr>
+        <tr style="background:#FFFFFF">
+          <td style="padding:7px 10px">After 7 Years</td>
+          <td style="padding:7px 10px;text-align:center">19</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">152</td>
+          <td style="padding:7px 10px;text-align:center">2.92</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">228</td>
+        </tr>
+        <tr style="background:#EDE8E0">
+          <td style="padding:7px 10px">8 Years — Max</td>
+          <td style="padding:7px 10px;text-align:center">20</td>
+          <td style="padding:7px 10px;text-align:center;font-weight:600">160</td>
+          <td style="padding:7px 10px;text-align:center">3.08</td>
+          <td style="padding:7px 10px;text-align:center;color:#666">240</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="background:#FFF9E6;border:1px solid #F59E0B;border-radius:6px;padding:12px 16px;font-size:11px;color:#92400E;margin-top:8px">
+    <strong>ADP Configuration Note &mdash; Grant (Main):</strong> Enter the starting-tier annual hours. Use ADP Award Rules or Manual Award to configure 
+    tenure step-ups on each employee&apos;s anniversary date. &nbsp;|&nbsp;
+    <strong>ADP Configuration Note &mdash; Accrual (MA/CA):</strong> Configure each service band as a separate accrual rule row in ADP, 
+    entering the corresponding hrs/pay-period rate for each tenure band. Accrual pauses automatically once the 1.5&times; cap balance is reached.
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANE 7 — PAY STATEMENT REQUIREMENTS
+     ══════════════════════════════════════════════════════════════ -->
+<div id="pane-paystatements" class="pane">
+  <div class="sec-hdr state"><div class="dot"></div>Pay Statement Requirements by Jurisdiction</div>
+  <p style="font-size:12px;color:#555;margin-bottom:18px;">
+    The table below shows <strong>exactly what must appear</strong> on employee pay statements for each jurisdiction.
+    ADP must be configured accordingly. Where &ldquo;available balance&rdquo; is required, ADP's built-in balance display typically satisfies the requirement.
+    Consult legal counsel to confirm any changes to local ordinances after this policy was drafted.
+  </p>
+
+  <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:28px">
+    <thead>
+      <tr style="background:#21232C;color:#fff">
+        <th style="padding:8px 10px;text-align:left;font-weight:600;width:22%">Jurisdiction / Policy</th>
+        <th style="padding:8px 10px;text-align:center;font-weight:600;width:10%">Required?</th>
+        <th style="padding:8px 10px;text-align:left;font-weight:600;width:38%">What Must Be Shown on Pay Statement</th>
+        <th style="padding:8px 10px;text-align:left;font-weight:600;width:30%">Statutory Citation / Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="background:#F2E8D9">
+        <td style="padding:7px 10px"><strong>California &mdash; PTO</strong></td>
+        <td style="padding:7px 10px;text-align:center"><span style="color:#B91C1C;font-weight:700">REQUIRED</span></td>
+        <td style="padding:7px 10px">Available balance only (accrued &amp; unused hours)</td>
+        <td style="padding:7px 10px;color:#555">CA Labor Code &sect;226(a)(10); can be on wage statement or separate writing on pay date</td>
+      </tr>
+      <tr style="background:#FFFFFF">
+        <td style="padding:7px 10px"><strong>California &mdash; Sick Leave</strong></td>
+        <td style="padding:7px 10px;text-align:center"><span style="color:#B91C1C;font-weight:700">REQUIRED</span></td>
+        <td style="padding:7px 10px">Available balance only (accrued &amp; unused hours)</td>
+        <td style="padding:7px 10px;color:#555">CA Labor Code &sect;246(i); can be on wage statement or separate writing on pay date</td>
+      </tr>
+      <tr style="background:#F2E8D9">
+        <td style="padding:7px 10px"><strong>Arizona &mdash; Sick Leave</strong></td>
+        <td style="padding:7px 10px;text-align:center"><span style="color:#B91C1C;font-weight:700">REQUIRED</span></td>
+        <td style="padding:7px 10px">(1) Hours accrued year-to-date &nbsp; (2) Hours used year-to-date &nbsp; (3) Available balance</td>
+        <td style="padding:7px 10px;color:#555">ARS &sect;23-375(B); on each pay statement or accessible electronic system</td>
+      </tr>
+      <tr style="background:#FFFFFF">
+        <td style="padding:7px 10px"><strong>Connecticut &mdash; Sick Leave</strong></td>
+        <td style="padding:7px 10px;text-align:center"><span style="color:#B91C1C;font-weight:700">REQUIRED</span></td>
+        <td style="padding:7px 10px">Available balance only (accrued &amp; unused hours)</td>
+        <td style="padding:7px 10px;color:#555">CGS &sect;31-57u(g); on each pay statement or accessible electronic system</td>
+      </tr>
+      <tr style="background:#F2E8D9">
+        <td style="padding:7px 10px"><strong>Illinois &mdash; PLAWA (state-wide)</strong></td>
+        <td style="padding:7px 10px;text-align:center"><span style="color:#B91C1C;font-weight:700">REQUIRED</span></td>
+        <td style="padding:7px 10px">Available balance only (accrued &amp; unused hours)</td>
+        <td style="padding:7px 10px;color:#555">820 ILCS 192; on pay stub or separate written notice with each paycheck</td>
+      </tr>
+      <tr style="background:#F2E8D9">
+        <td style="padding:7px 10px"><strong>Massachusetts &mdash; Sick Leave</strong></td>
+        <td style="padding:7px 10px;text-align:center"><span style="color:#B91C1C;font-weight:700">REQUIRED</span></td>
+        <td style="padding:7px 10px">Available balance only (accrued &amp; unused hours)</td>
+        <td style="padding:7px 10px;color:#555">MGL c.149 &sect;148C; on each pay stub or accessible system</td>
+      </tr>
+      <tr style="background:#FFFFFF">
+        <td style="padding:7px 10px"><strong>Massachusetts &mdash; PTO (MA employees)</strong></td>
+        <td style="padding:7px 10px;text-align:center"><span style="color:#D97706;font-weight:700">RECOMMENDED</span></td>
+        <td style="padding:7px 10px">Available balance (MA Wage Act treats accrued PTO as earned wages; balance visibility strongly recommended)</td>
+        <td style="padding:7px 10px;color:#555">MA Wage Act (MGL c.149 &sect;148); no explicit pay stub mandate but critical for wage claim defense</td>
+      </tr>
+      <tr style="background:#F2E8D9">
+        <td style="padding:7px 10px"><strong>Michigan &mdash; ESTA</strong></td>
+        <td style="padding:7px 10px;text-align:center"><span style="color:#B91C1C;font-weight:700">REQUIRED</span></td>
+        <td style="padding:7px 10px">Available balance (accrued &amp; unused hours)</td>
+        <td style="padding:7px 10px;color:#555">MCL &sect;408.1013; on pay stub or other written notice with each paycheck</td>
+      </tr>
+      <tr style="background:#FFFFFF">
+        <td style="padding:7px 10px"><strong>Minnesota &mdash; ESST (all MN employees)</strong></td>
+        <td style="padding:7px 10px;text-align:center"><span style="color:#B91C1C;font-weight:700">REQUIRED</span></td>
+        <td style="padding:7px 10px">(1) Hours accrued year-to-date &nbsp; (2) Hours used year-to-date &nbsp; (3) Available balance</td>
+        <td style="padding:7px 10px;color:#555">Minn. Stat. &sect;181.9446; on pay stub or separate notice with each paycheck</td>
+      </tr>
+      <tr style="background:#F2E8D9">
+        <td style="padding:7px 10px"><strong>New Jersey &mdash; ESSL</strong></td>
+        <td style="padding:7px 10px;text-align:center"><span style="color:#B91C1C;font-weight:700">REQUIRED</span></td>
+        <td style="padding:7px 10px">(1) Hours accrued in pay period &nbsp; (2) Total hours accrued YTD &nbsp; (3) Hours used YTD &nbsp; (4) Current available balance</td>
+        <td style="padding:7px 10px;color:#555">NJ Admin. Code 12:69-3.3; NJDOL guidance; on each pay stub or accessible system</td>
+      </tr>
+
+      <tr style="background:#FFFFFF">
+        <td style="padding:7px 10px"><strong>New York State &mdash; Paid Sick Leave</strong></td>
+        <td style="padding:7px 10px;text-align:center"><span style="color:#D97706;font-weight:700">ON REQUEST</span></td>
+        <td style="padding:7px 10px">Available balance &mdash; upon written request by employee only (not automatically on every pay stub)</td>
+        <td style="padding:7px 10px;color:#555">NY Labor Law &sect;196-b; best practice is to include balance on each pay stub voluntarily</td>
+      </tr>
+      <tr style="background:#F2E8D9">
+        <td style="padding:7px 10px"><strong>New York City &mdash; ESSTA (Earned Safe &amp; Sick Time)</strong></td>
+        <td style="padding:7px 10px;text-align:center"><span style="color:#B91C1C;font-weight:700">REQUIRED</span></td>
+        <td style="padding:7px 10px">(1) Hours accrued during pay period &nbsp; (2) Hours used during pay period &nbsp; (Best practice: also show running available balance)</td>
+        <td style="padding:7px 10px;color:#555">NYC Admin. Code &sect;20-914(a); on each pay statement or accessible electronic system</td>
+      </tr>
+      <tr style="background:#FFFFFF">
+        <td style="padding:7px 10px"><strong>New York &mdash; Paid Prenatal Leave (NYC employees)</strong></td>
+        <td style="padding:7px 10px;text-align:center"><span style="color:#B91C1C;font-weight:700">REQUIRED</span></td>
+        <td style="padding:7px 10px">(1) Hours used during the pay period &nbsp; (2) Remaining available balance</td>
+        <td style="padding:7px 10px;color:#555">NY PPL law; NYC implementing guidance; on pay statement or other written documentation each pay period</td>
+      </tr>
+      <tr style="background:#F2E8D9">
+        <td style="padding:7px 10px"><strong>NYC Protected Time Off</strong></td>
+        <td style="padding:7px 10px;text-align:center"><span style="color:#475569;font-weight:700">VERIFY</span></td>
+        <td style="padding:7px 10px">Available balance where required under NYC ordinance; confirm with ADP for current notice requirements</td>
+        <td style="padding:7px 10px;color:#555">NYC ordinance; ADP defaults should handle; confirm with legal counsel</td>
+      </tr>
+      <tr style="background:#FFFFFF">
+        <td style="padding:7px 10px"><strong>Main Company PTO / Sick (non-regulated states)</strong></td>
+        <td style="padding:7px 10px;text-align:center"><span style="color:#475569">No req.</span></td>
+        <td style="padding:7px 10px">No federal requirement; no applicable state requirement in non-regulated states</td>
+        <td style="padding:7px 10px;color:#555">ADP Self-Service balance visibility is good practice even where not legally required</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="background:#FEF3C7;border:1px solid #F59E0B;border-radius:6px;padding:14px 18px;font-size:11px;color:#78350F">
+    <strong>Summary &mdash; The key distinction across jurisdictions:</strong><br><br>
+    <strong>Available balance only</strong> (CA PTO, CA Sick, CT, IL, MA Sick, MI): Show the running available hours in the bank. No breakdown of what was earned or used in the current pay period required.<br><br>
+    <strong>Accrued + Used + Balance</strong> (AZ, MN, NJ): Show all three &mdash; how many hours accrued so far this year, how many used, and the current remaining balance.<br><br>
+    <strong>Accrued in period + Used in period</strong> (NYC ESSTA): Show what was earned and used specifically in this pay period; maintain a running balance via ADP Self-Service.<br><br>
+    <strong>Used in period + Remaining balance</strong> (NY Prenatal Leave, NYC employees): Show exactly how much Prenatal Leave was taken in this pay period and how many hours are left.
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANE — PAID HOLIDAYS
+     ══════════════════════════════════════════════════════════════ -->
+<div id="pane-paid-holidays" class="pane">
+  <div class="sec-hdr main-co"><div class="dot"></div>PAID HOLIDAYS, FLOATING HOLIDAYS &amp; FLOATING CULTURAL DAY — HR Reference</div>
+  <p style="font-size:12px;color:#555;margin-bottom:20px;">
+    Holiday benefits are administered separately from PTO and Sick Leave. They do not accrue and are not tracked in the same ADP banks as PTO or sick leave.
+    The Company publishes an annual holiday calendar that governs official observance dates for the year.
+  </p>
+
+  <!-- Company-Recognized Holidays -->
+  <div style="background:var(--warn-bg);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:12px 16px;font-size:12px;color:var(--warn);font-weight:600;margin-bottom:20px;">
+    HR Action: Publish and distribute the annual holiday calendar at the start of each calendar year. The calendar supersedes the default Saturday/Sunday observance rules where otherwise noted.
+  </div>
+
+  <div style="font-size:11px;font-weight:700;color:var(--med-blue);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Company-Recognized Paid Holidays — 7 Per Year</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-bottom:24px;">
+    <div style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:9px 13px;display:flex;align-items:center;gap:10px;">
+      <div style="background:var(--accent);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;">1</div>
+      <div style="font-size:12px;font-weight:700;color:var(--text);">New Year's Day</div>
+    </div>
+    <div style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:9px 13px;display:flex;align-items:center;gap:10px;">
+      <div style="background:var(--accent);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;">2</div>
+      <div style="font-size:12px;font-weight:700;color:var(--text);">Memorial Day</div>
+    </div>
+    <div style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:9px 13px;display:flex;align-items:center;gap:10px;">
+      <div style="background:var(--accent);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;">3</div>
+      <div style="font-size:12px;font-weight:700;color:var(--text);">Independence Day</div>
+    </div>
+    <div style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:9px 13px;display:flex;align-items:center;gap:10px;">
+      <div style="background:var(--accent);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;">4</div>
+      <div style="font-size:12px;font-weight:700;color:var(--text);">Labor Day</div>
+    </div>
+    <div style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:9px 13px;display:flex;align-items:center;gap:10px;">
+      <div style="background:var(--accent);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;">5</div>
+      <div style="font-size:12px;font-weight:700;color:var(--text);">Thanksgiving Day</div>
+    </div>
+    <div style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:9px 13px;display:flex;align-items:center;gap:10px;">
+      <div style="background:var(--accent);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;">6</div>
+      <div style="font-size:12px;font-weight:700;color:var(--text);">Day After Thanksgiving</div>
+    </div>
+    <div style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:9px 13px;display:flex;align-items:center;gap:10px;">
+      <div style="background:var(--accent);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;">7</div>
+      <div style="font-size:12px;font-weight:700;color:var(--text);">Christmas Day</div>
+    </div>
+  </div>
+
+  <!-- Holiday Key Rules Table -->
+  <div style="font-size:11px;font-weight:700;color:var(--med-blue);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Key Policy Rules — HR Reference</div>
+  <div class="tbl-wrap" style="margin-bottom:24px;">
+    <table>
+      <thead>
+        <tr>
+          <th>Rule</th>
+          <th>Detail</th>
+          <th>HR Action / ADP Note</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Observance — Saturday holiday</strong></td>
+          <td>Observed on the preceding Friday</td>
+          <td>Confirmed in annual holiday calendar</td>
+        </tr>
+        <tr>
+          <td><strong>Observance — Sunday holiday</strong></td>
+          <td>Observed on the following Monday</td>
+          <td>Confirmed in annual holiday calendar</td>
+        </tr>
+        <tr>
+          <td><strong>Eligibility — Full-time</strong></td>
+          <td>All regular full-time employees</td>
+          <td>Automatically eligible; no setup needed per employee</td>
+        </tr>
+        <tr>
+          <td><strong>Eligibility — Part-time</strong></td>
+          <td>Only if holiday falls on a regularly scheduled workday</td>
+          <td>Verify schedule before approving holiday pay</td>
+        </tr>
+        <tr>
+          <td><strong>Holiday pay max</strong></td>
+          <td>Up to 8 hours based on scheduled hours</td>
+          <td>ADP codes as holiday pay; does not count toward OT</td>
+        </tr>
+        <tr>
+          <td><strong>Holiday during PTO</strong></td>
+          <td>Day treated as holiday — not charged against PTO balance</td>
+          <td>If ADP incorrectly charges PTO, correct manually in employee record</td>
+        </tr>
+        <tr>
+          <td><strong>Non-exempt working on holiday</strong></td>
+          <td>1.5x regular rate for hours worked + alternate paid day off</td>
+          <td>Alternate day must be within 14 calendar days; coordinate with manager</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Floating Holidays -->
+  <div style="font-size:11px;font-weight:700;color:var(--med-blue);text-transform:uppercase;letter-spacing:.08em;margin:4px 0 10px;">Floating Holidays — HR Administration</div>
+  <div class="tbl-wrap" style="margin-bottom:24px;">
+    <table>
+      <thead>
+        <tr>
+          <th>Parameter</th>
+          <th>Rule</th>
+          <th>ADP / Admin Note</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Amount — hired before July 1</strong></td>
+          <td>3 floating holidays granted upon hire</td>
+          <td>Load 3 hours into floating holiday bank at hire</td>
+        </tr>
+        <tr>
+          <td><strong>Amount — hired on or after July 1</strong></td>
+          <td>2 floating holidays granted upon hire</td>
+          <td>Load 2 hours into floating holiday bank at hire</td>
+        </tr>
+        <tr>
+          <td><strong>Annual renewal</strong></td>
+          <td>4 floating holidays each January 1</td>
+          <td>Mass-grant via ADP at year start; verify against active roster</td>
+        </tr>
+        <tr>
+          <td><strong>Carryover</strong></td>
+          <td>None — expire December 31</td>
+          <td>ADP should zero out unused balance at year-end</td>
+        </tr>
+        <tr>
+          <td><strong>Payout at termination</strong></td>
+          <td>Not paid out unless required by law</td>
+          <td>Confirm with legal for CA/MA employees</td>
+        </tr>
+        <tr>
+          <td><strong>Eligible employees</strong></td>
+          <td>Full-time regular employees</td>
+          <td>Part-time employees are not eligible</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Floating Cultural Day -->
+  <div style="font-size:11px;font-weight:700;color:var(--med-blue);text-transform:uppercase;letter-spacing:.08em;margin:4px 0 10px;">Floating Cultural Day — HR Administration</div>
+  <div class="cards">
+    <div class="card">
+      <div class="card-hdr main-co">Floating Cultural Day <span class="chip">Full-Time Regular Employees</span></div>
+      <div class="card-body">
+        <div class="field-row"><span class="field-label">Amount</span><span class="field-val">8 hours per calendar year</span></div>
+        <div class="field-row"><span class="field-label">Grant Date</span><span class="field-val">January 1 each year (or upon completing 90-day period for mid-year hires)</span></div>
+        <div class="field-row"><span class="field-label">Eligibility</span><span class="field-val">Full-time regular employees who have completed the 90-Day Introductory Period</span></div>
+        <div class="field-row"><span class="field-label">Usage Increment</span><span class="field-val">4-hour increments or full day (8 hours)</span></div>
+        <div class="field-row"><span class="field-label">Carryover</span><span class="field-val no-req">None — must be used within the calendar year granted</span></div>
+        <div class="field-row"><span class="field-label">Payout at Termination</span><span class="field-val no-req">Not paid out upon termination of employment</span></div>
+        <div class="field-row"><span class="field-label">ADP Bank Name</span><span class="field-val">Floating Cultural Day</span></div>
+        <div class="field-row"><span class="field-label">Request Process</span><span class="field-val">Submitted via ADP Self Service; requires manager approval in advance</span></div>
+        <div class="note-row">Employees are not required to disclose the reason for the day. Managers should make every effort to accommodate requests subject to business needs. The Floating Cultural Day supports Furnished Quarters' Core Values of Care and Community.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:#FFFBEB;border-left:4px solid #F59E0B;border-radius:8px;padding:14px 18px;margin-top:16px;font-size:12px;color:var(--text);line-height:1.7;">
+    <strong>&#9888; Important Restriction — Wage Replacement:</strong> Floating holidays and the Floating Cultural Day may not be used for wage replacement when an employee's sick leave is exhausted <em>or</em> when the sick leave balance is insufficient to cover an absence. After sick leave runs out or there is not enough sick leave, employees may only request PTO for wage replacement using the reason code <strong>PTO — Call Out</strong> in ADP Self Service. These benefits are not substitutes for sick leave or PTO in a qualified sick absence scenario. If an employee or manager asks to use floating time this way, decline and direct the question to HR.
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANE 9 — HR FAQ
+     ══════════════════════════════════════════════════════════════ -->
+<div id="pane-faq" class="pane">
+  <style>
+    .faq-section-hdr { font-size:13px;font-weight:700;color:#fff;background:var(--med-blue);padding:8px 14px;border-radius:6px;margin:24px 0 12px;letter-spacing:.04em; }
+    .faq-section-hdr.emp { background:var(--accent2); }
+    .faq-item { background:#fff;border:1px solid var(--border);border-radius:6px;margin-bottom:8px;overflow:hidden; }
+    .faq-q { padding:11px 14px;font-size:12px;font-weight:700;color:var(--text);cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none; }
+    .faq-q:hover { background:var(--lt-blue); }
+    .faq-q .arr { color:var(--med-blue);font-size:13px;transition:transform .18s; }
+    .faq-q.open .arr { transform:rotate(90deg); }
+    .faq-a { display:none;padding:0 14px 13px;font-size:12px;color:#444;line-height:1.65; }
+    .faq-a.open { display:block; }
+    .faq-a strong { color:var(--text); }
+    .faq-a ul { margin:6px 0 4px 16px; }
+    .faq-a ul li { margin-bottom:4px; }
+  </style>
+
+  <p style="font-size:12px;color:#555;margin-bottom:4px;line-height:1.6">Quick-reference answers for the questions HR receives most often — from both employees and managers. Click any question to expand the answer.</p>
+
+  <!-- ── EMPLOYEE QUESTIONS ──────────────────────────────────────── -->
+  <div class="faq-section-hdr emp">&#128100; Questions from Employees</div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Where do I see my PTO and sick leave balances? <span class="arr">&#9654;</span></div>
+    <div class="faq-a">Both balances are visible in <strong>ADP Self Service</strong>. Employees see two separate balances side by side — one for PTO and one for Sick Leave. Employees in states that require it will also see their sick leave balance on their pay statement each pay period. If an employee cannot find their balances, direct them to ADP Self Service and confirm their profile is updated. Contact HR if the balance appears incorrect.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">When can I start using PTO? (new hire question) <span class="arr">&#9654;</span></div>
+    <div class="faq-a">New employees must complete <strong>90 days of employment</strong> before using PTO. The balance may already be visible in ADP during this period but cannot be used until the 90-day mark. <strong>Sick leave has no waiting period</strong> — it accrues from day one and can be used as soon as it accrues. This is a common question from new hires who see a PTO balance but cannot yet access it.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What happens to unused PTO at year-end? <span class="arr">&#9654;</span></div>
+    <div class="faq-a">Up to <strong>40 hours</strong> of unused PTO carries into the next calendar year. Any amount above 40 hours is forfeited at year-end where permitted by law. <strong>California exception:</strong> PTO is a vested wage and cannot be forfeited under CA state law — do not advise CA employees that PTO will be forfeited. <strong>Massachusetts exception:</strong> Accrued PTO is treated as a vested wage under the MA Wage Act and must be paid out at separation.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What if my sick leave runs out during an absence? <span class="arr">&#9654;</span></div>
+    <div class="faq-a">Once sick leave is exhausted, the absence continues without automatic pay. The employee is not automatically moved to PTO. The employee may <strong>request</strong> to use available PTO for wage replacement — this must come from the employee. The employee can make this request by logging into ADP Self Service and submitting their time off using the reason code <strong>PTO — Call Out</strong>. They do not need to contact HR to initiate this request. <strong>NYC employees</strong> have an additional step: NYC Protected Time Off (32 hrs, flat grant) covers the absence as job-protected but unpaid leave before the employee elects to use PTO. The Protected Time Off bank is reduced based on time away, even when PTO is used for pay. Job protection remains regardless.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Can I schedule sick leave in advance for a medical appointment? <span class="arr">&#9654;</span></div>
+    <div class="faq-a"><strong>Yes</strong> — sick leave can be scheduled in advance for any protected sick leave reason. Protected reasons include: scheduled doctor, dentist, or specialist appointments; ongoing treatment (physical therapy, chemotherapy); mental health care; preventive care; and caring for a family member. The employee does not need to provide a diagnosis. Sick leave <strong>cannot</strong> be used to extend a vacation, for personal plans, or to use up the bank before year-end. Those are PTO purposes.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Does my state give me more sick leave than the main policy? <span class="arr">&#9654;</span></div>
+    <div class="faq-a">Possibly. State and local laws provide additional protections in: Arizona, California, Connecticut, Illinois, Massachusetts, Michigan, Minnesota (including Minneapolis), New Jersey, New York State, and New York City. <strong>ADP is configured to apply the correct rules automatically</strong> based on the employee's work location. Employees do not need to manage this themselves. If an employee asks about their specific state entitlement, direct them to HR rather than guessing. See the <em>Sick Leave — States</em> tab for full jurisdiction details.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Will I get paid out for sick leave when I leave the company? <span class="arr">&#9654;</span></div>
+    <div class="faq-a"><strong>No</strong> — sick leave is not paid out at separation under the main company policy. Sick leave is a benefit that expires when employment ends. <strong>PTO payout rules:</strong> Main Company employees receive a prorated PTO payout through their separation date (per offer letter terms). Massachusetts and California employees receive full payout of all accrued PTO at separation under state law.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">I work in California / Massachusetts — how is my PTO different? <span class="arr">&#9654;</span></div>
+    <div class="faq-a">CA and MA employees accrue PTO per weekly pay period rather than receiving a front-loaded grant on January 1. State law treats PTO as earned wages. Key differences: <ul><li><strong>CA:</strong> PTO cannot be forfeited. All accrued PTO must be paid out at separation. Accrual cap is 1.5× annual tier amount.</li><li><strong>MA:</strong> Accrued PTO is a vested wage under the MA Wage Act. All accrued PTO must be paid out at separation. Both PTO and sick leave balances appear on pay statements.</li></ul>Employees in these states see their balances in ADP and on pay stubs each pay period. HR manages these accrual schedules — employees do not need to calculate manually.</div>
+  </div>
+
+  <!-- ── MANAGER QUESTIONS ──────────────────────────────────────── -->
+  <div class="faq-section-hdr" style="margin-top:32px">&#128205; Questions from Managers</div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Can I deny a sick leave request? <span class="arr">&#9654;</span></div>
+    <div class="faq-a"><strong>Generally, no</strong> — managers should not deny sick leave for qualifying reasons. If an employee is absent for illness, injury, medical appointment, family care, safe time, or public health reasons, the absence is protected under company policy and, in many states, under law. <strong>Managers must contact HR before denying any sick leave request</strong>, especially for employees in regulated states (AZ, CA, CT, IL, MA, MI, MN, NJ, NY/NYC). Denial without HR review creates legal risk. Do not ask probing questions, request a diagnosis, or require the employee to find their own coverage as a condition of sick leave approval.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What documentation can I ask for? <span class="arr">&#9654;</span></div>
+    <div class="faq-a">Managers may <strong>not</strong> require documentation for a single-day absence. Documentation (such as a return-to-work note) may only be requested after <strong>three or more consecutive workdays</strong> of absence, and only in coordination with HR. Managers may <strong>never</strong> ask for a diagnosis, the nature of a medical condition, or detailed medical information. Requesting this information can violate the ADA, FMLA, and various state laws. Always contact HR before requesting any documentation from an employee.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How do I approve time off in ADP? <span class="arr">&#9654;</span></div>
+    <div class="faq-a">All time-off requests — both PTO and sick leave — are submitted and approved through <strong>ADP WorkforceNow</strong>. Managers should: <ul><li>Review pending requests in ADP WorkforceNow promptly (within 2 business days is best practice)</li><li>Approve or decline based on staffing and business needs for PTO; approve sick leave for qualifying reasons</li><li>Ensure all approved or declined decisions are recorded in ADP — email or verbal approvals alone are not sufficient</li><li>Contact HR if an absence is complex, extended, or may qualify for FMLA or another leave program</li></ul></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">An employee wants to use PTO instead of sick leave — can I allow it? <span class="arr">&#9654;</span></div>
+    <div class="faq-a"><strong>No.</strong> Company policy and state law in most jurisdictions require sick leave to be applied first to qualifying absences. Managers may not allow an employee to use PTO in place of sick leave while sick leave is still available. Doing so would create legal liability in regulated states and policy violations company-wide. The correct order is: <ol style="margin:6px 0 4px 16px"><li>Sick leave is applied first (automatic)</li><li>If sick is exhausted, the absence continues</li><li>Employee may then request PTO for wage replacement (employee-initiated only)</li></ol>If an employee insists, direct the question to HR.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Can I require employees to find their own coverage before calling out sick? <span class="arr">&#9654;</span></div>
+    <div class="faq-a"><strong>No.</strong> Managers may not require an employee to find or arrange their own coverage as a condition of using sick leave. This is explicitly prohibited under most state sick leave laws and company policy. Coverage is a management responsibility. Managers should have a coverage plan for their team that does not depend on sick employees remaining at work or coordinating replacements before leaving.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">I think an employee is misusing sick leave. What do I do? <span class="arr">&#9654;</span></div>
+    <div class="faq-a"><strong>Contact HR before taking any action.</strong> Managers should not independently address suspected sick leave misuse. Document the patterns you have observed (specific dates, frequency, surrounding circumstances) and bring them to HR. HR will assess whether the pattern meets the threshold to request documentation or take any corrective action, consistent with applicable law. Retaliation against an employee for using protected sick leave — even suspected misuse — creates significant legal exposure. Never discipline, penalize, or threaten an employee for sick leave use without HR guidance.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">An employee's absence might qualify for FMLA. What do I do? <span class="arr">&#9654;</span></div>
+    <div class="faq-a"><strong>Contact HR immediately.</strong> Managers do not determine FMLA eligibility — HR does. If an employee's absence is for a serious health condition (their own or a family member's), has lasted more than three consecutive days, or is part of a chronic condition pattern, it may trigger FMLA notice obligations. Managers must not ignore potential FMLA triggers. Even if the employee does not mention FMLA by name, HR must be notified if the circumstances could qualify. FMLA leave runs concurrently with sick leave — HR will manage the coordination in ADP.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">An employee called out sick on a holiday or scheduled day off. Does sick leave apply? <span class="arr">&#9654;</span></div>
+    <div class="faq-a">Generally, sick leave is not charged for a day the employee was not otherwise scheduled to work (including company holidays, scheduled days off, or days outside their regular schedule). If an employee calls out sick on a day they were scheduled and it happens to be adjacent to a holiday, sick leave applies to the scheduled workdays only. The holiday itself is covered as a company holiday — not charged to sick leave. Contact HR if the situation involves an extended absence that spans multiple days including holidays.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">An employee in NYC is out. How does sick leave, Protected Time Off, and PTO work together? <span class="arr">&#9654;</span></div>
+    <div class="faq-a">NYC employees have four potential layers of leave. The correct process is:<ul><li><strong>Step 1:</strong> ESSTA and/or NYPSSL paid sick leave (up to 56 hrs/yr combined) is applied first to qualifying absences</li><li><strong>Step 2:</strong> If sick leave is exhausted, NYC Protected Time Off (32 hrs, flat annual grant) covers the absence — job-protected but unpaid. Managers may NOT require the employee to use PTO during this step</li><li><strong>Step 3:</strong> The employee may <em>elect</em> to use PTO for wage replacement. This request must come from the employee. The Protected Time Off bank is reduced based on time away, even when PTO is used for pay. Job protection remains in place regardless</li></ul>Direct all NYC extended absences to HR for ADP processing. Do not attempt to manage the coding sequence independently.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Can an employee use floating holidays instead of sick leave when sick leave is exhausted or insufficient? <span class="arr">&#9654;</span></div>
+    <div class="faq-a"><strong>No.</strong> Floating holidays and the Floating Cultural Day may not be used in lieu of sick time, and may not be used for wage replacement when sick leave is exhausted <em>or</em> when the sick leave balance is insufficient to cover an absence. This applies whether the sick bank is completely empty or simply does not have enough hours to cover the full absence. After sick leave runs out or is insufficient, the employee may only request PTO for wage replacement using the reason code <strong>PTO — Call Out</strong> in ADP Self Service. Floating holidays and the Floating Cultural Day serve a different purpose and are not substitutes for sick leave or PTO in a qualified sick absence scenario. If a manager or employee requests to use floating holidays or the Floating Cultural Day this way, decline and direct the question to HR.</div>
+  </div>
+
+  <!-- ── HOLIDAY & CULTURAL DAY QUESTIONS ────────────────────────── -->
+  <div class="faq-section-hdr" style="background:var(--accent2);">&#127970; Paid Holidays &amp; Floating Days — HR Questions</div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How are the seven recognized paid holidays set up in ADP? <span class="arr">&#9654;</span></div>
+    <div class="faq-a">Paid holidays are coded as holiday pay in ADP and are separate from the PTO and Sick Leave accrual banks. Eligible employees receive holiday pay automatically based on their scheduled hours for the observed holiday date (up to 8 hours). Non-exempt employees who work on a recognized holiday must be coded for both holiday premium pay (1.5x) and an alternate paid day off. The alternate day off must be scheduled within 14 calendar days of the observed holiday — coordinate with the employee's manager and process in ADP. Consult ADP WorkforceNow documentation or HR leadership for the specific pay code configuration for your payroll setup.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What is the ADP bank name for the Floating Cultural Day, and how is it granted? <span class="arr">&#9654;</span></div>
+    <div class="faq-a">The Floating Cultural Day is tracked in ADP under the bank name <strong>Floating Cultural Day</strong>. On January 1 each year, eligible full-time regular employees who have completed their 90-Day Introductory Period receive an 8-hour grant. For new hires who complete their 90-day period mid-year, the 8 hours should be loaded at that time if the employee remains active in the same calendar year. Unused hours do not carry over and should be zeroed out at year-end. The bank is separate from floating holidays — do not combine them in ADP.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">An employee's PTO was reduced during a week that included a recognized holiday. How do I fix it? <span class="arr">&#9654;</span></div>
+    <div class="faq-a">Per policy, if a recognized holiday falls during an approved PTO period, the holiday must be treated as a paid holiday and the PTO balance should <strong>not</strong> be reduced for that day. If ADP incorrectly deducted PTO for the holiday date, correct it manually in the employee's time-off record. Add the hours back to the PTO bank and code the day as holiday pay instead. Notify the employee once corrected so they are aware their balance has been restored.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How do we handle holiday eligibility for part-time employees? <span class="arr">&#9654;</span></div>
+    <div class="faq-a">Regular part-time employees are eligible for holiday pay <strong>only if the holiday falls on a day they are regularly scheduled to work</strong>. Before approving or processing holiday pay for a part-time employee, verify their standard schedule. If the holiday falls on a day they are not scheduled, they do not receive holiday pay for that day. If the holiday falls on a day they are scheduled, pay them for their scheduled hours up to the 8-hour maximum. Document the schedule review in case of questions.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">A holiday falls during an employee's approved leave of absence. Do they receive holiday pay? <span class="arr">&#9654;</span></div>
+    <div class="faq-a">It depends on the type of leave. If the leave is an approved <strong>PTO period</strong>: yes, the day is treated as a paid holiday and is not charged to PTO. If the leave is an <strong>unpaid leave of absence</strong>: holiday pay is provided only where required by applicable law. If the leave is a <strong>legally protected leave</strong> (such as FMLA or a state-protected leave): holiday eligibility is administered in accordance with applicable law. Always consult HR leadership or employment counsel before making eligibility determinations for employees on protected leaves.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What is the difference between floating holidays and the Floating Cultural Day in ADP? <span class="arr">&#9654;</span></div>
+    <div class="faq-a">These are two distinct benefits that must be tracked in <strong>separate ADP banks</strong>. <strong>Floating Holidays:</strong> Full-time employees receive 3 hours upon hire (if hired before July 1) or 2 hours (if hired on/after July 1), then 4 floating holidays on each January 1 thereafter. ADP bank name: Floating Holiday (or as configured). <strong>Floating Cultural Day:</strong> Full-time employees receive 8 hours on January 1 each year (or upon completing the 90-day period for new hires), in a separate bank named Floating Cultural Day. Never combine these into the same ADP bank. Both expire December 31 and are not paid out at termination. Track them independently.</div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANE 10 — BEREAVEMENT LEAVE
+     ══════════════════════════════════════════════════════════════ -->
+<div id="pane-bereavement" class="pane">
+  <p style="font-size:12px;color:#555;margin-bottom:16px;line-height:1.6">Bereavement leave is administered separately from PTO and sick leave. Employees may not be required to exhaust PTO or sick leave before taking bereavement leave. Three policies apply at Furnished Quarters. Review the applicable policy based on the employee's work location.</p>
+
+  <!-- ── MAIN COMPANY POLICY ─────────────────────────────────────── -->
+  <div style="font-size:13px;font-weight:700;color:#fff;background:var(--med-blue);padding:8px 14px;border-radius:6px;margin:0 0 12px;letter-spacing:.04em">&#128064; Main Company Bereavement Leave Policy (All Full-Time Employees)</div>
+
+  <div class="card">
+    <div class="card-hdr main-co">Company Bereavement Leave Policy<span class="chip">All full-time employees</span></div>
+    <div class="card-body">
+      <div class="field-row"><span class="field-label">Days Granted</span><span class="field-val">Up to 3 paid workdays</span></div>
+      <div class="field-row"><span class="field-label">Pay During Leave</span><span class="field-val" style="color:#16A34A;font-weight:700">Full base rate — all 3 days paid</span></div>
+      <div class="field-row"><span class="field-label">Eligible Relationships</span><span class="field-val">Spouse or domestic partner &nbsp;|&nbsp; Parent &nbsp;|&nbsp; Child &nbsp;|&nbsp; Sibling &nbsp;|&nbsp; Grandparent &nbsp;|&nbsp; Grandchild</span></div>
+      <div class="field-row"><span class="field-label">Scheduling</span><span class="field-val">Consecutive or split with manager approval</span></div>
+      <div class="field-row"><span class="field-label">Notice</span><span class="field-val">Employee notifies manager and HR as soon as reasonably possible</span></div>
+      <div class="field-row"><span class="field-label">Documentation</span><span class="field-val">May be requested — not required upfront</span></div>
+      <div class="field-row"><span class="field-label">Additional Time Off</span><span class="field-val">Employee may separately request PTO to extend beyond the bereavement period</span></div>
+      <div class="field-row"><span class="field-label">ADP Submission</span><span class="field-val">Employee submits directly in ADP WorkforceNow — leave type: "Bereavement Leave." Manager approves in ADP. Do NOT recode as PTO or Sick Leave.</span></div>
+      <div class="note-row">Separate from PTO and sick leave balances. Bereavement leave does not count against either bank.</div>
+    </div>
+  </div>
+
+  <!-- ── CALIFORNIA ADDENDUM ─────────────────────────────────────── -->
+  <div style="font-size:13px;font-weight:700;color:#fff;background:var(--accent2);padding:8px 14px;border-radius:6px;margin:20px 0 12px;letter-spacing:.04em">&#127795; California Bereavement Leave</div>
+
+  <div class="card">
+    <div class="card-hdr ca">California Bereavement Leave<span class="chip">CA employees with 30+ days tenure</span></div>
+    <div class="card-body">
+      <div class="field-row"><span class="field-label">Days Granted</span><span class="field-val" style="font-weight:700">5 days total (vs. 3 in main policy)</span></div>
+      <div class="field-row"><span class="field-label">Pay — Days 1–3</span><span class="field-val" style="color:#16A34A;font-weight:700">Paid at base rate</span></div>
+      <div class="field-row"><span class="field-label">Pay — Days 4–5</span><span class="field-val" style="color:#B45309;font-weight:700">Unpaid — employee may elect to use PTO or sick leave (do NOT apply either automatically)</span></div>
+      <div class="field-row"><span class="field-label">Eligibility</span><span class="field-val">30+ days of employment at time of bereavement</span></div>
+      <div class="field-row"><span class="field-label">Time to Complete</span><span class="field-val">Must be completed within 3 months of the date of death</span></div>
+      <div class="field-row"><span class="field-label">Family Definition</span><span class="field-val">Broader than main policy — adds: parent-in-law; and any person with an "equivalent of family relationship"</span></div>
+      <div class="field-row"><span class="field-label">CFRA Coordination</span><span class="field-val">Runs concurrent with CFRA leave when applicable — contact HR</span></div>
+      <div class="field-row"><span class="field-label">Documentation</span><span class="field-val">Required within 30 days — acceptable: death certificate, obituary, or written verification of death/funeral</span></div>
+      <div class="note-row"><strong>HR action required:</strong> Contact legal/HR leadership before processing any CA bereavement request involving Days 4–5. Employee must affirmatively elect to use PTO or sick — do not apply either bank without written request.</div>
+    </div>
+  </div>
+
+  <!-- ── ILLINOIS ADDENDUM ───────────────────────────────────────── -->
+  <div style="font-size:13px;font-weight:700;color:#fff;background:#374151;padding:8px 14px;border-radius:6px;margin:20px 0 12px;letter-spacing:.04em">&#9878; Illinois Family Bereavement Leave Act (FBLA)</div>
+
+  <div class="card">
+    <div class="card-hdr state">Illinois Family Bereavement Leave Act (FBLA)<span class="chip">FMLA-eligible IL employees only</span></div>
+    <div class="card-body">
+      <div class="field-row"><span class="field-label">Law</span><span class="field-val">Illinois Family Bereavement Leave Act (FBLA) — 820 ILCS 36/</span></div>
+      <div class="field-row"><span class="field-label">Amount Per Event</span><span class="field-val" style="font-weight:700">Up to 2 weeks (10 workdays) per qualifying event</span></div>
+      <div class="field-row"><span class="field-label">Annual Maximum</span><span class="field-val" style="font-weight:700">6 weeks within any 12-month rolling period</span></div>
+      <div class="field-row"><span class="field-label">Eligibility</span><span class="field-val">FMLA-eligible employees only (12 months tenure + 1,250 hrs in prior 12 months)</span></div>
+      <div class="field-row"><span class="field-label">Pay During Leave</span><span class="field-val" style="color:#B45309;font-weight:700">Unpaid — employee may elect to use available PTO (do NOT apply PTO automatically)</span></div>
+      <div class="field-row"><span class="field-label">Notice Required</span><span class="field-val">48-hour advance notice required when reasonably foreseeable</span></div>
+      <div class="field-row"><span class="field-label">Time to Complete</span><span class="field-val">Must complete leave within 60 days of the qualifying event</span></div>
+      <div class="field-row"><span class="field-label">Reinstatement</span><span class="field-val" style="color:#16A34A;font-weight:700">Guaranteed — same or equivalent position, pay, and benefits</span></div>
+      <div class="field-row"><span class="field-label">Non-Retaliation</span><span class="field-val" style="color:#DC2626;font-weight:700">Strict — no adverse action may be taken related to this leave</span></div>
+
+      <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px">Qualifying Event Types &amp; Documentation:</div>
+        <div class="field-row"><span class="field-label">Type 1: Bereavement</span><span class="field-val">Death of a covered family member. Standard bereavement documentation (death cert, obituary, or written verification).</span></div>
+        <div class="field-row"><span class="field-label">Type 2: Reproductive Loss</span><span class="field-val">Miscarriage &nbsp;|&nbsp; Failed IVF &nbsp;|&nbsp; Failed adoption or surrogacy &nbsp;|&nbsp; Stillbirth &nbsp;|&nbsp; Diagnosis that affects fertility. Documentation requirements differ from bereavement — handle with strict confidentiality.</span></div>
+      </div>
+
+      <div class="note-row" style="background:#FEF2F2;border-color:#FCA5A5;color:#7F1D1D"><strong>HR action required immediately:</strong> Contact HR leadership for any IL FBLA request. Reproductive loss events must be handled with strict confidentiality — do not discuss details with any manager or team. Log the leave as FBLA in ADP. No adverse employment action may be taken before, during, or after this leave.</div>
+    </div>
+  </div>
+
+  <!-- ── HR CHECKLIST ─────────────────────────────────────────────── -->
+  <div style="font-size:13px;font-weight:700;color:#fff;background:#6B7280;padding:8px 14px;border-radius:6px;margin:20px 0 12px;letter-spacing:.04em">&#9989; HR Bereavement Leave Processing Checklist</div>
+
+  <div class="card">
+    <div class="card-body" style="padding:16px 18px">
+      <div style="font-size:12px;color:var(--text);line-height:2">
+        &#9744;&nbsp; Determine the employee's work location (Main, CA, or IL addendum applies).<br>
+        &#9744;&nbsp; Confirm eligibility: full-time status (Main/CA); FMLA eligibility (IL only); 30+ days tenure (CA only).<br>
+        &#9744;&nbsp; Identify the qualifying relationship and confirm it meets the applicable policy definition.<br>
+        &#9744;&nbsp; Communicate the number of leave days available and the pay structure for each day.<br>
+        &#9744;&nbsp; Instruct the employee to submit the request directly in ADP WorkforceNow, selecting "Bereavement Leave" as the leave type — not PTO, not Sick Leave.<br>
+        &#9744;&nbsp; Manager approves the bereavement request in ADP. HR confirms the leave type is coded correctly.<br>
+        &#9744;&nbsp; For CA Days 4–5 or IL leave: confirm whether the employee elects to use PTO — get written request before applying PTO separately in ADP.<br>
+        &#9744;&nbsp; Collect documentation within the required timeframe (CA: 30 days; IL: at time of request or within reasonable period).<br>
+        &#9744;&nbsp; For IL reproductive loss: route entirely through HR — no manager involvement in event details.<br>
+        &#9744;&nbsp; Confirm reinstatement rights communicated to employee and manager for IL leave.<br>
+        &#9744;&nbsp; Document all actions in the employee's personnel file.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANE — WEEKEND TRAVEL FLEX DAY
+     ══════════════════════════════════════════════════════════════ -->
+<div id="pane-flex-day" class="pane">
+  <div style="font-size:22px;font-weight:700;color:var(--dark);margin-bottom:6px;">Weekend Travel Flex Day — Exempt Employees</div>
+  <div style="font-size:14px;color:var(--muted);margin-bottom:24px;">A limited flexibility benefit for exempt salaried employees required to travel for business on a weekend.</div>
+
+  <div style="background:#F0F9FF;border-left:4px solid var(--accent);border-radius:8px;padding:16px 18px;margin-bottom:20px;font-size:13px;color:var(--dark);line-height:1.7;">
+    <strong>HR Note:</strong> This policy applies only to employees properly classified as exempt under applicable wage and hour laws. It does not create an entitlement to overtime compensation, compensatory time, or additional wages, and does not alter an employee's exempt status. Administer flex day requests through the employee's manager — HR does not need to be copied unless a dispute arises.
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+    <div class="card">
+      <div class="card-hdr main-co">Eligibility</div>
+      <div class="card-body">
+        <div class="field-row"><span class="field-label">Who Qualifies</span><span class="field-val">Exempt salaried employees required to travel for Company business on a Saturday or Sunday</span></div>
+        <div class="field-row"><span class="field-label">Excluded</span><span class="field-val">Non-exempt employees; weekend work without required travel away from regular work location</span></div>
+        <div class="field-row"><span class="field-label">Qualifying Travel</span><span class="field-val">Required business travel on a Sat or Sun involving travel away from the employee's regular work location</span></div>
+        <div class="field-row"><span class="field-label">Does Not Qualify</span><span class="field-val">Incidental remote work, weekend emails/calls, or minimal work performed without required travel</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr main-co">Flex Day Rules</div>
+      <div class="card-body">
+        <div class="field-row"><span class="field-label">Amount</span><span class="field-val">One (1) flex day per qualifying weekend travel event</span></div>
+        <div class="field-row"><span class="field-label">Window</span><span class="field-val">Must generally be taken within <strong>14 calendar days</strong> following the qualifying weekend travel</span></div>
+        <div class="field-row"><span class="field-label">Approval</span><span class="field-val">Discretionary — subject to management approval and business needs</span></div>
+        <div class="field-row"><span class="field-label">Accrual / Vesting</span><span class="field-val">Does not accrue or vest</span></div>
+        <div class="field-row"><span class="field-label">Cash Value</span><span class="field-val">None — not paid out upon separation</span></div>
+        <div class="field-row"><span class="field-label">PTO Impact</span><span class="field-val">Does <strong>not</strong> reduce the employee's accrued PTO balance</span></div>
+        <div class="field-row"><span class="field-label">Expiration</span><span class="field-val">Expires after 14 calendar days if unused; no carryover; does not accumulate</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:20px;">
+    <div style="font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;">Administration Process</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+      <div style="background:#F8FAFC;border-radius:8px;padding:14px;font-size:12px;color:var(--dark);">
+        <div style="font-weight:700;margin-bottom:6px;color:var(--accent);">Step 1 — Qualifying Event</div>
+        Employee completes required business travel on a Saturday or Sunday involving travel away from their regular work location.
+      </div>
+      <div style="background:#F8FAFC;border-radius:8px;padding:14px;font-size:12px;color:var(--dark);">
+        <div style="font-weight:700;margin-bottom:6px;color:var(--accent);">Step 2 — Request</div>
+        Employee requests a flex day from their manager within a reasonable time following the qualifying travel. Request must be scheduled in advance.
+      </div>
+      <div style="background:#F8FAFC;border-radius:8px;padding:14px;font-size:12px;color:var(--dark);">
+        <div style="font-weight:700;margin-bottom:6px;color:var(--accent);">Step 3 — Approval</div>
+        Manager approves, denies, or reschedules the flex day based on business needs. Company may reschedule to ensure operational continuity.
+      </div>
+      <div style="background:#F8FAFC;border-radius:8px;padding:14px;font-size:12px;color:var(--dark);">
+        <div style="font-weight:700;margin-bottom:6px;color:var(--accent);">Step 4 — Documentation</div>
+        Employee may be required to provide reasonable documentation confirming qualifying weekend travel for administrative purposes.
+      </div>
+    </div>
+  </div>
+
+  <div class="faq-item" style="background:#FFF8E1;border-left:4px solid #F59E0B;border-radius:8px;padding:16px 18px;margin-bottom:20px;font-size:13px;color:var(--dark);line-height:1.7;">
+    <strong>Key HR Reminders:</strong>
+    <ul style="margin:8px 0 0 18px;line-height:1.9;">
+      <li>This policy <strong>only applies to exempt employees</strong>. Never approve a flex day for a non-exempt employee — that could implicate overtime obligations.</li>
+      <li>Flex days <strong>do not reduce PTO balances</strong>. Do not enter them in ADP as PTO.</li>
+      <li>The 14-day window may be extended by management due to operational needs — document the extension.</li>
+      <li>If an employee argues they are owed a flex day for remote weekend work (no travel), the policy does not apply. Weekend work without required travel does not qualify.</li>
+      <li>This policy does not alter the employee's exempt status or create any entitlement to overtime or comp time.</li>
+      <li>This policy may be modified, suspended, or discontinued by the Company at any time, consistent with applicable law.</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+function toggleFaq(q) {
+  const a = q.nextElementSibling;
+  const isOpen = a.classList.contains('open');
+  document.querySelectorAll('.faq-a').forEach(el => el.classList.remove('open'));
+  document.querySelectorAll('.faq-q').forEach(el => el.classList.remove('open'));
+  if (!isOpen) { a.classList.add('open'); q.classList.add('open'); }
+}
+</script>
+
+<script>
+// ── Tab navigation ─────────────────────────────────────────────────────────
+function showPane(el, id) {
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('pane-' + id).classList.add('active');
+  el.classList.add('active');
+}
+function goToTab(id) {
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('pane-' + id).classList.add('active');
+  const tab = [...document.querySelectorAll('.tab')].find(t => t.getAttribute('onclick') && t.getAttribute('onclick').includes("'"+id+"'"));
+  if (tab) tab.classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// ── Card data ──────────────────────────────────────────────────────────────
+const tiers = ['B','C','D','E'];
+
+function makeCard(tier, group, hdrClass, extraFields) {
+  const groupLabel = {
+    'main': { label: 'Main Company', subtitle: 'Non-CA, Non-MA employees', accrualType: 'Grant (Front-Loaded) — Jan 1', carryover: '40 hours', payStmt: 'No', payout: 'Yes — prorated accrual paid on separation', wait: '90 days' },
+    'ma':   { label: 'Massachusetts', subtitle: 'MA employees', accrualType: 'Accrual — Per Payroll Period', carryover: '1.5× annual hours (accrual cap)', payStmt: 'Recommended — MA Wage Act (ADP Self-Service balance visibility)', payout: 'YES — Required by MA Wage Act', wait: '90 days' },
+    'ca':   { label: 'California', subtitle: 'CA employees', accrualType: 'Accrual — Per Payroll Period (CA Vested Wage)', carryover: '1.5× annual hours (no forfeiture; mandatory carryover)', payStmt: 'YES — REQUIRED by CA law on each itemized wage statement', payout: 'YES — Required by CA law at final rate of pay', wait: '90 days' },
+  }[group];
+
+  const payStmtClass = (group === 'ca') ? 'yes-req' : (group === 'ma') ? '' : 'no-req';
+  const payoutClass  = (group === 'ca' || group === 'ma' || group === 'main') ? 'yes-payout' : 'no-req';
+
+  return `
+  <div class="card">
+    <div class="card-hdr ${hdrClass}">PTO Policy ${tier} — ${groupLabel.label}<span class="chip">${groupLabel.subtitle}</span></div>
+    <div class="card-body">
+      <div class="field-row"><span class="field-label">Accrual Type</span><span class="field-val"><span class="badge-accrual ${group==='main'?'grant':'earn'}">${group==='main'?'Grant':'Accrual'}</span>${groupLabel.accrualType}</span></div>
+      <div class="field-row"><span class="field-label">Annual Hours</span><span class="field-val">${({B:'80–160 hrs (10–20 days)',C:'120–160 hrs (15–20 days)',D:'160–200 hrs (20–25 days)',E:'96–160 hrs (12–20 days)'})[tier]} — <em style="color:#666;font-size:11px">tenure-based; see Accrual Schedule tab</em></span></div>
+      <div class="field-row"><span class="field-label">Accrual Rate</span><span class="field-val">${group==='main'?'N/A — Grant (front-loaded Jan 1)':({B:'1.54–3.08 hrs/pp',C:'2.31–3.08 hrs/pp',D:'3.08–3.85 hrs/pp',E:'1.85–3.08 hrs/pp'})[tier]+' (tenure-based)'}</span></div>
+      <div class="field-row"><span class="field-label">Waiting Period</span><span class="field-val">${groupLabel.wait}</span></div>
+      <div class="field-row"><span class="field-label">Carryover</span><span class="field-val">${groupLabel.carryover}</span></div>
+      <div class="field-row"><span class="field-label">Min Increment</span><span class="field-val">4 hours</span></div>
+      <div class="field-row"><span class="field-label">Pay Stmt Req?</span><span class="field-val ${payStmtClass}">${groupLabel.payStmt}</span></div>
+      <div class="field-row"><span class="field-label">Payout on Sep?</span><span class="field-val ${payoutClass}">${groupLabel.payout}</span></div>
+      ${extraFields || ''}
+    </div>
+  </div>`;
+}
+
+// Render PTO cards
+const mainExtra = `<div class="note-row">Front-loaded Jan 1; prorated for new hires. Excess above 40-hr carryover forfeited where law allows. Payout on separation: accrued balance prorated to separation date is paid out per Company policy.</div>`;
+const maExtra   = `<div class="note-row">Accrual begins date of hire. No accrual during unpaid LOA. No year-end payout. Balance = earned wages under MA law. ADP Self-Service: 30-day advance request required.</div>`;
+const caExtra   = `<div class="note-row">Accrual begins date of hire. No forfeiture allowed. Accrual pauses at cap and resumes once balance drops below cap. Full payout at final rate of pay on any separation.</div>`;
+
+document.getElementById('cards-main-pto').innerHTML = tiers.map(t => makeCard(t, 'main', 'main-co', mainExtra)).join('');
+document.getElementById('cards-ma-pto').innerHTML   = tiers.map(t => makeCard(t, 'ma', 'ma', maExtra)).join('');
+document.getElementById('cards-ca-pto').innerHTML   = tiers.map(t => makeCard(t, 'ca', 'ca', caExtra)).join('');
+
+// Sick state cards
+const sickData = [
+  { name:'Arizona (EPST)', chip:'AZ', rate:'1 hr / 30 hrs worked', annMax:'40', usage:'40', wait:'None', carryover:'40 hrs', payStmt:'YES — show: (1) accrued YTD, (2) used YTD, (3) available balance (ARS §23-375(B))', payout:'No', note:'Rehire within 9 months: reinstate prior balance. Public health emergency closure covered.' },
+  { name:'California', chip:'CA', rate:'Non-exempt: 1/30 | Exempt: 40-hr grant at hire + Jan 1', annMax:'Non-exempt: 80 cap | Exempt: 40', usage:'40 hrs or 5 days (whichever greater)', wait:'30-day work threshold (eligibility)', carryover:'NE: 80 (cap) | Exempt: no carryover', payStmt:'YES — show: available balance (accrued & unused hrs); itemized wage stmt or separate writing on pay date (CA Labor Code §246(i))', payout:'No', note:'Payment must be made no later than next regular payroll period. Designated person: 1 per year allowed. Local ordinances (SF, LA) may add rights.' },
+  { name:'Connecticut', chip:'CT', rate:'1 hr / 30 hrs worked', annMax:'40', usage:'40', wait:'None', carryover:'40 hrs', payStmt:'YES — show: available balance (each pay period or accessible system) (CGS §31-57u)', payout:'No', note:'Benefit year: Jan 1 – Dec 31.' },
+  { name:'Illinois — PLAWA', chip:'Illinois', rate:'1 hr / 30 hrs worked', annMax:'40', usage:'40', wait:'None', carryover:'40 hrs (or full front-load in lieu)', payStmt:'YES — show: available balance (accrued & unused hrs); pay stub or written notice with each paycheck (820 ILCS 192)', payout:'Via PTO policy', note:'PLAWA — Paid Leave for All Workers Act. Applies to all Illinois employees state-wide. PLAWA leave may be used for any reason. No documentation requirement. Administered through PTO program per IL PLAWA structure.' },
+  { name:'Massachusetts (MEST)', chip:'MA', rate:'1 hr / 30 hrs worked', annMax:'40', usage:'40', wait:'None', carryover:'40 hrs', payStmt:'YES — show: available balance (accrued & unused earned sick time hrs); pay stub or accessible system (MGL c.149 §148C)', payout:'No', note:'Permitted uses include pregnancy loss, failed assisted reproduction, adoption, surrogacy. Travel to/from appointment included.' },
+  { name:'Michigan (MEST)', chip:'MI', rate:'1 hr / 30 hrs worked', annMax:'72 hrs usage cap', usage:'72', wait:'None (accrual starts Feb 21 2025 or hire, whichever later)', carryover:'72 hrs', payStmt:'YES — show: available balance (accrued & unused earned sick time hrs); pay stub or written notice with each paycheck (MCL §408.1013)', payout:'No', note:'Higher cap than most states. Company must reimburse reasonable doc costs where required. Medical info confidential.' },
+  { name:'Minnesota — ESST (state-wide)', chip:'MN', rate:'1 hr / 30 hrs worked', annMax:'48 per year; 80 total balance cap', usage:'48', wait:'80 hrs worked in a year', carryover:'80 hrs (total balance cap)', payStmt:'YES — show: (1) accrued YTD, (2) used YTD, (3) available balance; pay stub or accessible system (Minn. Stat. §181.9446)', payout:'No', note:'Includes bereavement/funeral and financial/legal matters after family death. One designated person per year. Covers all MN employees including those in Minneapolis.' },
+  { name:'New Jersey — ESSL', chip:'NJ', rate:'1 hr / 30 hrs worked', annMax:'40', usage:'40', wait:'None', carryover:'40 hrs', payStmt:'YES — show: (1) hrs accrued in period, (2) total accrued YTD, (3) hrs used YTD, (4) current available balance (NJ Admin. Code 12:69-3.3)', payout:'No', note:'School-related meetings for child education included as permitted use. Company may apply ESSL to qualifying absences unless employee objects.' },
+  { name:'New York — Paid Sick & Safe (PSSL)', chip:'NY State', rate:'1 hr / 30 hrs worked', annMax:'56', usage:'56', wait:'None', carryover:'56 hrs (cap)', payStmt:'YES (on request) — show: available balance upon written employee request; best practice: show on each pay stub (NY Labor Law §196-b)', payout:'No', note:'Benefit year: Jan 1 – Dec 31. NYC employees also covered by ESSTA addendum below.' },
+  { name:'NYC — Safe & Sick Time (ESSTA)', chip:'New York City', rate:'1 hr / 30 hrs worked', annMax:'56', usage:'56', wait:'None', carryover:'56 hrs (cap)', payStmt:'YES — show: (1) accrued in period, (2) used in period, (3) available balance; doc reimbursement required (NYC Admin. Code §20-914(a))', payout:'No', note:'NYC addendum to NY state PSSL. NYC-specific documentation cost reimbursement required.' },
+  { name:'New York — Paid Prenatal Leave (PPL)', chip:'NY State', rate:'Flat 20-hr grant per 52-week period', annMax:'20', usage:'20', wait:'None', carryover:'None — expires after 52-week period', payStmt:'YES (NYC employees) — show: (1) hrs used during pay period, (2) remaining available balance (NY Labor Law §196-b.2; NYC implementing guidance)', payout:'No', note:'Available only to employee directly receiving prenatal services. Separate entitlement — NOT deducted from PTO or sick. 52-week period runs from first use. Min increment: 1 hr.' },
+  { name:'NYC Protected Time Off', chip:'New York City', rate:'Flat 32-hr grant on Jan 1', annMax:'32', usage:'32', wait:'None — available at start of employment', carryover:'None — no carryover, expires year-end', payStmt:'YES — show: available Protected Time Off balance where required by law (NYC Admin. Code §20-1271)', payout:'No', note:'UNPAID leave — 32 hrs granted annually. PROCESS: Paid sick leave (ESSTA/NYPSSL) is applied first for qualifying absences. After sick exhausted, this leave covers the absence (unpaid). Employees may elect to use available PTO for wage replacement — request must come from the employee. The absence is still counted against the NYC Protected Time Off bank, and that balance is reduced based on time away. Using PTO does not preserve or extend the 32-hour balance. Job protection remains in place regardless. Min increment: 4 hrs. No carryover — expires Dec 31.' },
+
+];
+
+document.getElementById('cards-sick-state').innerHTML = sickData.map(d => `
+  <div class="card">
+    <div class="card-hdr state">${d.name}<span class="chip">${d.chip}</span></div>
+    <div class="card-body">
+      <div class="field-row"><span class="field-label">Accrual / Grant</span><span class="field-val">${d.rate}</span></div>
+      <div class="field-row"><span class="field-label">Annual Max (hrs)</span><span class="field-val">${d.annMax}</span></div>
+      <div class="field-row"><span class="field-label">Annual Usage Max</span><span class="field-val">${d.usage} hours</span></div>
+      <div class="field-row"><span class="field-label">Waiting Period</span><span class="field-val">${d.wait}</span></div>
+      <div class="field-row"><span class="field-label">Carryover</span><span class="field-val">${d.carryover}</span></div>
+      <div class="field-row"><span class="field-label">Pay Stmt Req?</span><span class="field-val ${d.payStmt.startsWith('YES')?'yes-req':''}">${d.payStmt}</span></div>
+      <div class="field-row"><span class="field-label">Payout on Sep?</span><span class="field-val ${d.payout.startsWith('YES')?'yes-payout':'no-req'}">${d.payout}</span></div>
+      <div class="note-row">${d.note}</div>
+    </div>
+  </div>`).join('');
+</script>
+</body>
+</html>
